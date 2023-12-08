@@ -1,0 +1,453 @@
+\chapter{\quad 线性模型}
+\vspace{0.5in}
+	\begin{center}
+	    \textcolor[RGB]{255, 0, 0}{\faHeart}真正能带来满足感的不是苗条或财富, 而是肯定自己的人生.\textcolor[RGB]{255, 0, 0}{\faHeart}
+	\end{center}
+	\rightline{——《心流: 最优体验心理学》}
+%\begin{center}
+%    \includegraphics{线性分类.png}
+%\end{center}
+\begin{center}
+    \pgfornament[width=0.36\linewidth,color=lsp]{88}
+\end{center}
+\section{基本线性模型}
+线性模型即通过样本特征的线性组合来进行预测的模型. 
+
+给定数据集$D=\left\{ \left( \boldsymbol{x}_i,y_i \right) \right\} _{i=1}^{n}$. 其中, $\boldsymbol{x}_i$ $=\left[ \boldsymbol{x}_{i1},\boldsymbol{x}_{i2},...,\boldsymbol{x}_{im} \right] ^T$ , $y_i\in \mathbb{R}$ . 回归(Regression)问题就是基于输入属性(特征) $\boldsymbol{x}$来尽可能准确地预测实值输出$y$. 线性回归试图学得如下模型:
+\begin{equation}
+f\left( \boldsymbol{x}_i \right) =\boldsymbol{w}^T\boldsymbol{x}_i+b
+\end{equation}
+其中, $\boldsymbol{w}$和$b$分别为系数向量和截距(偏置). 
+
+\subsection{最小二乘线性回归}
+最小二乘回归采用均方误差 (Mean Square Error,MSE) (即$\ell_2$范数定义的平方误差)作为损失函数，那么损失函数就是关于变量$\boldsymbol{w}$和$b$的函数:
+\begin{equation}
+\begin{aligned}
+L\left( \boldsymbol{\hat{w}} \right) =\sum_{i=1}^n{\lVert \boldsymbol{\hat{w}}^T\!\boldsymbol{x}_i-y_i \rVert _{2}^{2}}&=\left[ \boldsymbol{\hat{w}}^T\!\boldsymbol{x}_1-y_1,\cdots ,\boldsymbol{\hat{w}}^T\!\boldsymbol{x}_n-y_n \right] \left[ \begin{array}{c}
+	\boldsymbol{\hat{w}}^T\!\boldsymbol{x}_1-y_1\\
+	\vdots\\
+	\boldsymbol{\hat{w}}^T\!\boldsymbol{x}_n-y_n\\
+\end{array} \right] \\
+&=\left( \mathbf{X}\boldsymbol{\hat{w}}-\mathbf{y} \right) ^T\left( \mathbf{X}\boldsymbol{\hat{w}}-\mathbf{y} \right)
+\end{aligned}
+\end{equation}
+其中 $\boldsymbol{\hat{w}}= [\boldsymbol{w}; b]$. 相应的数据集的输入矩阵也表示为$\mathbf{X}\in \mathbb{R}^{n\times (m+1)}$, 则
+\begin{equation}
+\mathbf{X}=\left[ \begin{matrix}
+	x_{11}&		x_{12}&		\cdots&		x_{1m}&		1\\
+	x_{21}&		x_{22}&		\cdots&		x_{2m}&		1\\
+	\vdots&		\vdots&		\ddots&		\vdots&		\vdots\\
+	x_{n1}&		x_{n2}&		\cdots&		x_{nm}&		1\\
+\end{matrix} \right] =\left[ \begin{matrix}
+	\boldsymbol{x}_{1}^{T}&		1\\
+	\boldsymbol{x}_{2}^{T}&		1\\
+	\vdots&		\vdots\\
+	\boldsymbol{x}_{n}^{T}&		1\\
+\end{matrix} \right]  \nonumber
+\end{equation}
+则输出可以表示成$\mathbf{y}=[y_1,y_2,...,y_n]^T$. 通过最小化$\boldsymbol{\hat{w}}$, 有:
+\begin{equation}
+\begin{aligned}
+\boldsymbol{\hat{w}} = argmin_{\boldsymbol{\hat{w}}}L\left( \boldsymbol{\hat{w}} \right) &\rightarrow \frac{\partial L\left( \boldsymbol{\hat{w}} \right)}{\partial \boldsymbol{\hat{w}}}=0\\
+&\rightarrow 2\mathbf{X}^T\mathbf{X}\boldsymbol{\hat{w}}-2\mathbf{X}^T\mathbf{y}=0 \\
+& \rightarrow \boldsymbol{\hat{w}}=\left( \mathbf{X}^T\mathbf{X} \right) ^{-1}\mathbf{X}^T\mathbf{y}=\mathbf{X}^{\dag}\mathbf{y}
+\end{aligned}
+\end{equation}
+则最终学习得到的多元线性回归模型为:
+\begin{equation}
+f\left( \boldsymbol{\hat{x}}_i \right) =\boldsymbol{\hat{x}}_{i}^{T}\left( \mathbf{X}^T\mathbf{X} \right) ^{-1}\mathbf{X}^T\mathbf{y}
+\end{equation}
+其中, $X^{\dag} = (\mathbf{X}^T\mathbf{X} )^{-1}\mathbf{X}^T$为矩阵$\mathbf{X} $的伪逆.  当$\mathbf{X} $为行满秩或列满秩时可以直接求解, 但是对于非满秩的样本集合$\mathbf{X} $ 则需要通过奇异值分解(SVD), 得到
+
+\begin{equation}
+\mathbf{X}=\mathbf{U\Sigma V}^T
+\end{equation}
+于是:
+\begin{equation}
+\mathbf{X}^{\dag}=\mathbf{V\Sigma }^{-1}\mathbf{U}^T
+\end{equation}
+从几何的角度, 最小二乘法相当于模型和样本间的距离平方求和, 假设我们的训练样本张成一个$n$维空间(满秩情况): $\mathbf{X}=Span\left( \boldsymbol{x}_1,\boldsymbol{x}_2,\cdots ,\boldsymbol{x}_n \right) $. 而模型可以写成$f\left( \boldsymbol{w} \right) =\mathbf{X}\boldsymbol{w}$, 即$\boldsymbol{x}_1,\boldsymbol{x}_2,\cdots ,\boldsymbol{x}_n$的某种组合, 而最小二乘法希望$\mathbf{y}$与模型的误差或距离越小越好, 于是它们的差应该与这个张成的空间垂直:
+\begin{equation}
+\mathbf{X}^T\left( \mathbf{y}-\mathbf{X}\boldsymbol{\beta } \right) =0\rightarrow \boldsymbol{w }=\left( \mathbf{X}^T\mathbf{X} \right) ^{-1}\mathbf{X}^T\mathbf{y}
+\end{equation}
+同时, 若$\mathbf{X}^T\mathbf{X}$的逆存在, 我们也可以将$\boldsymbol{w}$表示为如下形式:
+\begin{equation}
+\boldsymbol{w}=\left( \mathbf{X}^T\mathbf{X} \right) ^{-1}\mathbf{X}^T\mathbf{y}=\mathbf{X}^T\mathbf{X}\left( \mathbf{X}^T\mathbf{X} \right) ^{-2}\mathbf{X}^T\mathbf{y}=\mathbf{X}^T\boldsymbol{\alpha } \label{con:lincom}
+\end{equation}
+可以看出, 公式\eqref{con:lincom}说明系数向量$\boldsymbol{w}$可以表示为训练样本的线性组合, 即$\boldsymbol{w}=\sum_{i=1}^n{\alpha _i\boldsymbol{x}_i}$.
+%\subsection{Gauss-Markov定理}
+%当参数$\theta$的数学期望等于其真实的未知参数时, 即$E\left\{ \hat{\theta} \right\} =\theta $，称参数$\theta$的估计$\hat{\theta}$为无偏估计. 进一步地，如果无偏估计还具有最小方差，则称其为最优无偏估计。对数据向量$\bm{b}$含有加性噪声或扰动的方程$\boldsymbol{A\theta }=\boldsymbol{b}+\boldsymbol{e}$, 若最小二乘解$$
+
+
+
+
+
+\subsection{噪声为高斯分布的MLE}
+记$y=\boldsymbol{w}^T\boldsymbol{x}+\epsilon ,\epsilon \thicksim N\left( 0,\sigma ^2 \right) $, 那么$y\thicksim N\left( \boldsymbol{w}^T\boldsymbol{x,}\sigma ^2 \right) $. 代入极大似然估计中:
+\begin{equation}
+\begin{aligned}
+L\left( \boldsymbol{w} \right) &=\log p\left( \mathbf{y}\left| \mathbf{X},\boldsymbol{w} \right. \right) =\log \prod_{i=1}^n{p\left( y_i\left| \boldsymbol{x}_i,\boldsymbol{w} \right. \right)}\\
+&=\sum_{i=1}^n{\log \left( \frac{1}{\sqrt{2\pi \sigma}}e-\frac{\left( y_i-\boldsymbol{w}^T\boldsymbol{x}_i \right) ^2}{2\sigma ^2} \right)}\\
+argmax_{\boldsymbol{w}}L\left( \boldsymbol{w} \right) &=argmax_{\boldsymbol{w}}\sum_{i=1}^n{\left( y_i-\boldsymbol{w}^T\boldsymbol{x}_i \right) ^2}
+\end{aligned}
+\end{equation}
+其最终的结果与最小二乘估计的结果一致. 
+\section{贝叶斯线性回归}
+当线性回归当噪声为高斯分布的时候, 最小二乘损失导出的结果相当于对概率模型应用 MLE, 引入参数的先验时, 先验分布是高斯分布, 那么 MAP的结果相当于岭回归的正则化; 如果先验是拉普拉斯分布, 那么相当于 Lasso 的正则化. 这两种方案都是点估计方法, 我们希望利用贝叶斯方法来求解参数的后验分布. 线性回归的模型假设为:
+\begin{equation}
+\begin{array}{c}
+f(x)=w^{T} x \\
+y=f(x)+\varepsilon \\
+\varepsilon \sim \mathcal{N}\left(0, \sigma^{2}\right)
+\end{array}
+\end{equation}
+在贝叶斯方法中, 需要解决推断和预测两个问题. 
+\subsection{推断}
+引入高斯先验: $p(w)=\mathcal{N}(0,\Sigma_p)$. 对参数的后验分布进行推断: 
+\begin{equation}
+p(w \mid X, Y)=\frac{p(w, Y \mid X)}{p(Y \mid X)}=\frac{p(Y \mid w, X) p(w \mid X)}{\int p(Y \mid w, X) p(w \mid X) d w}
+\end{equation}
+分母和参数无关, 由于 $p(w|X)=p(w)$, 代入先验得到: 
+\begin{equation}
+p(w \mid X, Y) \propto \prod_{i=1}^{N} \mathcal{N}\left(y_{i} \mid w^{T} x_{i}, \sigma^{2}\right) \cdot \mathcal{N}\left(0, \Sigma_{p}\right)
+\end{equation}
+高斯分布取高斯先验的共轭分布依然是高斯分布, 于是可以得到后验分布也是一个高斯分布. 第一项: 
+\begin{equation}
+\begin{aligned}
+\prod_{i=1}^{N} \mathcal{N}\left(y_{i} \mid w^{T} x_{i}, \sigma^{2}\right) & =\frac{1}{(2 \pi)^{N / 2} \sigma^{N}} \exp \left(-\frac{1}{2 \sigma^{2}} \sum_{i=1}^{N}\left(y_{i}-w^{T} x_{i}\right)^{2}\right) \\
+& =\frac{1}{(2 \pi)^{N / 2} \sigma^{N}} \exp \left(-\frac{1}{2}(Y-X w)^{T}\left(\sigma^{-2} \mathbb{I}\right)(Y-X w)\right) \\
+& =\mathcal{N}\left(X w, \sigma^{2} \mathbb{I}\right)
+\end{aligned}
+\end{equation}
+代入上面的式子:
+\begin{equation}
+p(w \mid X, Y) \propto \exp \left(-\frac{1}{2 \sigma^{2}}(Y-X w)^{T} \sigma^{-2} \mathbb{I}(Y-X w)-\frac{1}{2} w^{T} \Sigma_{p}^{-1} w\right)
+\end{equation}
+假定最后得到的高斯分布为: $\mathcal{N}(\mu_w,\Sigma_w)$. 对于上面的分布, 采用配方的方式来得到最终的分布, 指数上面的二次项为$-\frac{1}{2 \sigma^{2}} w^{T} X^{T} X w-\frac{1}{2} w^{T} \Sigma_{p}^{-1} w$. 于是有:
+\begin{equation}
+\Sigma_{w}^{-1}=\sigma^{-2} X^{T} X+\Sigma_{p}^{-1}=A
+\end{equation}
+一次项: 
+\begin{equation}
+\frac{1}{2\sigma ^2}2Y^TXw=\sigma ^{-2}Y^TXw
+\end{equation}
+\subsection{预测}
+给定一个 $x^*$, 求解 $y^*$, 所以 $f(x^*)=x^{*T}w$, 代入参数后验, 有 $x^{*T}w\sim \mathcal{N}(x^{*T}\mu_w,x^{*T}\Sigma_wx^*)$, 添上噪声项:
+\begin{equation}
+\begin{aligned}
+p\left( y^*|X,Y,x^* \right) &=\int_w{p\left( y^*|w,X,Y,x^* \right) p\left( w|X,Y,X^* \right) dw=\int_w{p\left( y^*|w,x^* \right) p\left( w|X,Y \right) dw}} \\
+&=\mathcal{N}\left( \left( x^* \right) ^T\mu _w,\left( x^* \right) ^T\varSigma _wx^*+\sigma ^2 \right) 
+\end{aligned}
+\end{equation}
+\section{Ridge 回归}
+Ridge 回归针对变量矩阵$\mathbf{X}$由于变量间的多重共线性引入$L_2$范数正则化项(罚项)对最小二乘进行改进. 其目标函数为:
+\begin{equation}
+\begin{aligned}
+\boldsymbol{\hat{w}}&=arg\underset{\boldsymbol{w}}{\min}L\left( \boldsymbol{w} \right) +\lambda \lVert \boldsymbol{w} \rVert _{2}^{2} \\
+&=arg\underset{\boldsymbol{w}}{\min}\sum_{i=1}^n{\lVert \boldsymbol{w}^T\boldsymbol{x}_i-y_i \rVert _{2}^{2}}+\lambda \lVert \boldsymbol{w} \rVert _{2}^{2}\\
+&=arg\underset{\boldsymbol{w}}{\min}\left( \mathbf{X}\boldsymbol{w}-\mathbf{y} \right) ^T\left( \mathbf{X}\boldsymbol{w}-\mathbf{y} \right) +\lambda \boldsymbol{w}^T\boldsymbol{w}\\
+&=arg\underset{\boldsymbol{w}}{\min}\boldsymbol{w}^T\left( \mathbf{X}^T\mathbf{X}+\lambda \mathbf{I} \right) \boldsymbol{w}-2\boldsymbol{w}^T\mathbf{X}^T\mathbf{y}+\mathbf{y}^T\mathbf{y}\label{con:ridge1}
+\end{aligned}
+\end{equation}
+对式\eqref{con:ridge2}求$\boldsymbol{w}$可以得到:
+\begin{equation}
+\begin{aligned}
+\nabla \boldsymbol{w}&=2\left( \mathbf{X}^T\mathbf{X}+\lambda \mathbf{I} \right) ^{-1}\mathbf{X}^T\mathbf{y}-2\mathbf{X}^T\mathbf{y}=0\\
+&\boldsymbol{\hat{w}}=\left( \mathbf{X}^T\mathbf{X}+\lambda \mathbf{I} \right) ^{-1}\mathbf{X}^T\mathbf{y}
+\end{aligned}
+\end{equation}
+可以看出, $\lambda \mathbf{I}$可以保证$\left( \mathbf{X}^T\mathbf{X}+\lambda \mathbf{I} \right)$满秩、可逆, 但这也导致了此时的$\boldsymbol{\hat{w}}$成为了一个有偏估计. 所得解为最小二乘估计解, 岭回归是最小二乘估计的改进, 但因为选用的罚项二范数不满足稀疏性条件, 因此岭回归不具备变量选择的能力, 但却为 Lasso 的发展奠定了一定的基础. 同样地, Ridge的解也可以写成其对偶形式, 对损失函数求$\boldsymbol{w}$偏导后有:
+\begin{equation}
+\left( \mathbf{X}^T\mathbf{X} \right) \boldsymbol{w}+\lambda \boldsymbol{w}=\left( \mathbf{X}^T\mathbf{X}+\lambda \mathbf{I} \right) \boldsymbol{w}=\mathbf{X}^T\mathbf{y} \label{con:ridge2}
+\end{equation}
+则我们可以将其重写为:
+\begin{equation}
+\boldsymbol{w}=\lambda ^{-1}\mathbf{X}^T\left( \mathbf{y}-\mathbf{X}\boldsymbol{w} \right) =\mathbf{X}^T\boldsymbol{\alpha }
+\end{equation}
+这说明Ridge的解也可以表示为训练点的线性组合,$\boldsymbol{w}=\sum_{i=1}^n{\alpha _i\boldsymbol{x}_i}$, 其中$\lambda ^{-1}\left( \mathbf{y}-\mathbf{X}\boldsymbol{w} \right) $. 则我们有: 
+\begin{equation}
+\begin{aligned}
+\boldsymbol{\alpha }&=\lambda ^{-1}\left( \mathbf{y}-\mathbf{X}\boldsymbol{w} \right)  \\
+\Rightarrow \lambda \boldsymbol{\alpha }&=\left( \mathbf{y}-\mathbf{XX}^T\boldsymbol{\alpha } \right) \\
+\Rightarrow \mathbf{y}&=\left( \mathbf{XX}^T+\lambda \mathbf{I} \right) \boldsymbol{\alpha }\\
+\Rightarrow \boldsymbol{\alpha }&=\left( \mathbf{G}+\lambda \mathbf{I} \right) ^{-1}\mathbf{y}
+\end{aligned}
+\end{equation}
+\section{Lasso 回归}
+与Ridge回归类似, Lasso也在目标函数中引入了相应的正则项来防止模型过拟合. 不同于Ridge回归的是Lasso引入的是基于$L_1$范数的正则化项, 而$L_1$范数可以引起稀疏解, 进而实现对输入特征的选择, 因此Lasso也可以认为是一种嵌入式的特征选择方法. Lasso的目标函数为:
+\begin{equation}
+\begin{aligned}
+\boldsymbol{\hat{w}}&=arg\underset{\boldsymbol{w}}{\min}L\left( \boldsymbol{w} \right) +\lambda \lVert \boldsymbol{w} \rVert_1\\
+&\Longleftrightarrow arg\underset{\boldsymbol{w}}{\min}\sum_{i=1}^n{\lVert \boldsymbol{w}^T\boldsymbol{x}_i-y_i \rVert _{2}^{2}}  \ \  s.t. \sum{\left| w_j \right|}\le t  \label{con:lasso1}
+\end{aligned}
+\end{equation}
+\subsection{Lasso求闭式解}
+用Lagrangian乘子, 将式\eqref{con:lasso1} 中带有约束的问题转化为无约束问题, 即为:
+\begin{equation}
+L\left( \boldsymbol{w},\lambda \right) =\lVert \mathbf{y}-\mathbf{X}\boldsymbol{w} \rVert _{2}^{2}+\lambda \lVert \boldsymbol{w} \rVert _1-\lambda t \label{con:lasso2}
+\end{equation}
+当给定$\lambda$时, 对式\eqref{con:lasso2} 中的$\boldsymbol{w}$求导, 得到:
+\begin{equation}
+2\left( \mathbf{X}^T\mathbf{X}\boldsymbol{w}-\mathbf{X}^T\mathbf{y} \right) +\lambda \frac{\partial \lVert \boldsymbol{w} \rVert _1}{\partial \boldsymbol{w}}=0  \label{con:lasso3}
+\end{equation}
+对于$L_1$范数优化问题,  其梯度向量为:
+\begin{equation}
+\nabla _{\boldsymbol{w}}\lVert \boldsymbol{w} \rVert _1=\left[ \nabla _{w_1}\lVert \boldsymbol{w} \rVert _1,\cdots ,\nabla _{w_n}\lVert \boldsymbol{w} \rVert _1 \right] ^T
+\end{equation}
+其第$i$个元素为
+\begin{equation}
+\nabla _{w_i}\lVert \boldsymbol{w} \rVert _1=\frac{\partial \lVert \boldsymbol{w} \rVert _1}{\partial \boldsymbol{w}_i}=\left\{ \begin{array}{l}
+	\left\{ +1 \right\} ,\ w_i>0\\
+	\left\{ -1 \right\} ,\ w_i<0\\
+	\left[ -1,+1 \right] ,\ w_i=0\\
+\end{array}\left( i=1,\cdots ,n \right) \right. 
+\end{equation}
+为了得到Lasso的闭式解, 我们需要假设一个条件$\mathbf{X}^T\mathbf{X}=\mathbf{I} $, 即任意两个特征之间正交, 则可以记最小二乘法得到的闭式解为$\boldsymbol{w}^{OLS}=\mathbf{X}^T\mathbf{y}$, 则\eqref{con:lasso3} 的解可以表示为$\boldsymbol{w}=\boldsymbol{w}^{OLS}-\frac{\lambda}{2}\frac{\partial \lVert \boldsymbol{w} \rVert _1}{\partial \boldsymbol{w}}$. 则其解可以分情况讨论.
+\begin{itemize}
+	\item 对于$w^{OLS}_j>\frac{\lambda}{2}$, 由于$\frac{\partial \lVert \boldsymbol{w} \rVert _1}{\partial w_j}\le 1$, 所以$w_j>0$, 此时有$w_j=w_{j}^{OLS}-\frac{\lambda}{2}$.
+	\item 对于$w^{OLS}_j<-\frac{\lambda}{2}$, 由于$\frac{\partial \lVert \boldsymbol{w} \rVert _1}{\partial w_j}\ge -1$, 所以$w_j<0$, 此时有$w_j=w_{j}^{OLS}+\frac{\lambda}{2}$.
+	\item 对于$-\frac{\lambda}{2}\le w^{OLS}\le\frac{\lambda}{2}$, 通过反证法假设$w_j>0$, 则$\frac{\partial \lVert \boldsymbol{w} \rVert _1}{\partial \boldsymbol{w}}=1$, 所以$w_j =w^{OLS}_j-\frac{\lambda}{2}\frac{\partial \lVert \boldsymbol{w} \rVert _1}{\partial w_j} \le 0$, 矛盾; 同理可证$w_j<0$也不成立, 则$w_j= 0$.
+\end{itemize}
+则最终的闭式解可以表示为$w_{j}^{Lasso}=\text{sign}\left( w_{j}^{OLS} \right) \left( \left| w_{j}^{OLS} \right|-\frac{\lambda}{2} \right) ^+ $. 可以看出, 其闭式解是一种软阈值形式, 当$w_{j}^{Lasso}$的绝对值小于$\frac{\lambda}{2}$时将其变成0, 进而得到了系数向量的稀疏解. 
+\subsection{PGD算法求解Lasso}
+$L_1$正则化问题的求解可使用近端梯度下降(Proximal Gradient Descent, PGD)算法. $L_1$正则化问题的优化目标为:
+\begin{equation}
+\underset{\boldsymbol{x}}{\min}f\left( \boldsymbol{x} \right) +\lambda \lVert \boldsymbol{x} \rVert _1. \label{con:PGD1} 
+\end{equation}
+若$f(\boldsymbol{x})$可导, 且$\nabla f$ 满足$L$-Lipschitz条件, 即存在常数$L>0$使得
+\begin{equation}
+\lVert \nabla f\left( \boldsymbol{x'} \right) -\nabla f\left( \boldsymbol{x} \right) \rVert _{2}^{2}\le L\lVert \boldsymbol{x'}-\boldsymbol{x} \rVert _{2}^{2}\ \left( \forall \boldsymbol{x,x'} \right) 
+\end{equation}
+则在$\boldsymbol{x}_k$附近可将$f(\boldsymbol{x})$通过二阶泰勒展开近似为:
+\begin{equation}
+\begin{aligned}
+\hat{f}\left( \boldsymbol{x} \right) &\simeq f\left( \boldsymbol{x}_k \right) +\left< \nabla f\left( \boldsymbol{x}_k \right) ,\boldsymbol{x}-\boldsymbol{x}_k \right> +\frac{L}{2}\lVert \boldsymbol{x}-\boldsymbol{x}_k \rVert ^2 \\
+&=\frac{L}{2}\lVert \boldsymbol{x}-\left( \boldsymbol{x}_k-\frac{1}{L}\nabla f\left( \boldsymbol{x}_k \right) \right) \rVert _{2}^{2}+const, \label{con:PGD2} 
+\end{aligned}
+\end{equation}
+其中$const$是与$\boldsymbol{x}$无关的常数, $\left< \cdot ,\cdot \right> $表示内积. 显然,  式\eqref{con:PGD2} 取最小值时, $\boldsymbol{x}_{k+1}$有:
+\begin{equation}
+\boldsymbol{x}_{k+1}=\boldsymbol{x}_k-\frac{1}{L}\nabla f\left( \boldsymbol{x}_k \right) 
+\end{equation}
+于是, 若通过梯度下降法对$f(\boldsymbol{x})$进行最小化, 则每一步梯度下降迭代实际上等价于最小二次函数$\hat{f}\left( \boldsymbol{x} \right) $, 将其代入至\eqref{con:PGD1}, 可以得到$ \boldsymbol{x}$每一步迭代值为
+\begin{equation}
+arg\underset{\boldsymbol{x}}{\min}\frac{L}{2}\lVert \boldsymbol{x}-\left( \boldsymbol{x}_k-\frac{1}{L}\nabla f\left( \boldsymbol{x}_k \right) \right) \rVert _{2}^{2}+\lambda \lVert \boldsymbol{x} \rVert _1
+\end{equation}
+即在每一步对$f(\boldsymbol{x})$进行梯度下降迭代的同时考虑$L_1$范数最小化. 对于\eqref{con:PGD2}, 可先计算$\boldsymbol{z}=\boldsymbol{x}_k-\frac{1}{L}\nabla f\left( \boldsymbol{x}_k \right) $然后求解
+\begin{equation}
+arg\underset{\boldsymbol{x}}{\min}\frac{L}{2}\lVert \boldsymbol{x}- \boldsymbol{z}\rVert _{2}^{2}+\lambda \lVert \boldsymbol{x} \rVert _1
+\label{eq3.7.11}
+\end{equation}
+于是式\eqref{eq3.7.11}有闭式解:
+\begin{equation}
+x_{i}^{k+1}=\left\{ \begin{array}{l}
+	z_i-\frac{\lambda}{L},\ \frac{\lambda}{L}<z_i;\\
+	0,\ \ \ \ \ \ \ \left| z_i \right|\le \frac{\lambda}{L};\\
+	z_i+\frac{\lambda}{L},\,\,z_i<-\frac{\lambda}{L},\\
+\end{array} \right. 
+\end{equation}
+
+\section{Elastice Net 回归}
+众多研究表明, 如果有一组变量的两两相关性非常高, 那么 Lasso 倾向于只从中选择一个变量, 并且并不在意哪个被选择. 为了解决这个问题, Elastice Net被提出. 与 Lasso 模型类似, Elastic Net 估计能够同时进行变量选择和参数估计, 并且可以选择组相关变量. Elastice Net同时引入了基于$L_1$和$L_2$范数的罚项,  其目标函数如下:
+\begin{equation}
+\begin{aligned}
+\boldsymbol{\hat{w}}&=arg\underset{\boldsymbol{w}}{\min}L\left( \boldsymbol{w} \right) +\lambda_1 \lVert \boldsymbol{w} \rVert_1^2+\lambda_2 \lVert \boldsymbol{w} \rVert_2\\
+\end{aligned}
+\end{equation}
+Elastice Net融合了Lasso和Ridge的正则化项, 其仍然是一个凸优化问题.  其可以转化成一个$L_1$正则化问题. 
+
+\section{最小角度回归}
+最小角度回归(Least-angle regression), 待续. 
+\section{偏最小二乘回归}
+
+\section{线性判别分析}
+在LDA中, 我们需要对样本二分类, 记两种类别的样本分别为$x_{c_1}=\left\{x_i|y_i=-1\right\}$与$x_{c_1}=\left\{x_i|y_i=+1\right\}$, 则样本对应的标签可以表示为$y_i\in\left\{-1,+1\right\}$. 且类别$c_1$与$c_2$的样本数量分别为$N_1$与$N_2$, $N_1+N_2=N$.
+
+在 LDA 中, 我们的基本想法是选定一个方向, 将试验样本顺着这个方向投影, 投影后的数据需要满足两个条件, 从而可以更好地分类:
+\begin{itemize}
+	\item 相同类内部的试验样本距离较近.
+	\item 不同类别之间的样本距离较远. 
+\end{itemize}
+我们假定原来的数据是向量$x$, 那么顺着$w$方向的投影就是标量: 
+\begin{equation}
+z=w^{T} \cdot x(=|w| \cdot|x| \cos \theta)
+\end{equation}
+对第一点, 相同类内部的样本更为接近, 我们假设属于两类的试验样本数量分别是 $N_1$和 $N_2$, 那么我们采用方差矩阵来表征每一个类内的总体分布, 这里我们使用了协方差的定义, 用 $S$ 表示原数据的协方差:
+\begin{equation}
+\begin{aligned}
+C_{1}: \operatorname{Var}_{z}\left[C_{1}\right] & =\frac{1}{N_{1}} \sum_{i=1}^{N_{1}}\left(z_{i}-\overline{z_{c 1}}\right)\left(z_{i}-\overline{z_{c 1}}\right)^{T} \\
+& =\frac{1}{N_{1}} \sum_{i=1}^{N_{1}}\left(w^{T} x_{i}-\frac{1}{N_{1}} \sum_{j=1}^{N_{1}} w^{T} x_{j}\right)\left(w^{T} x_{i}-\frac{1}{N_{1}} \sum_{j=1}^{N_{1}} w^{T} x_{j}\right)^{T} \\
+& =w^{T} \frac{1}{N_{1}} \sum_{i=1}^{N_{1}}\left(x_{i}-\overline{x_{c 1}}\right)\left(x_{i}-\overline{x_{c 1}}\right)^{T} w \\
+& =w^{T} S_{1} w
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+C_{2}: \operatorname{Var}_{z}\left[C_{2}\right] & =\frac{1}{N_{2}} \sum_{i=1}^{N_{2}}\left(z_{i}-\overline{z_{c 2}}\right)\left(z_{i}-\overline{z_{c 2}}\right)^{T} \\
+& =w^{T} S_{2} w
+\end{aligned}
+\end{equation}
+所以类内距离可以记为:
+\begin{equation}
+\operatorname{Var}_{z}\left[C_{1}\right]+\operatorname{Var}_{z}\left[C_{2}\right]=w^{T}\left(S_{1}+S_{2}\right) w
+\end{equation}
+对于第二点, 我们可以用两类的均值表示这个距离:
+\begin{equation}
+\begin{aligned}
+\left(\overline{z_{c 1}}-\overline{z_{c 2}}\right)^{2} & =\left(\frac{1}{N_{1}} \sum_{i=1}^{N_{1}} w^{T} x_{i}-\frac{1}{N_{2}} \sum_{i=1}^{N_{2}} w^{T} x_{i}\right)^{2} \\
+& =\left(w^{T}\left(\overline{x_{c 1}}-\overline{x_{c 2}}\right)\right)^{2} \\
+& =w^{T}\left(\overline{x_{c 1}}-\overline{x_{c 2}}\right)\left(\overline{x_{c 1}}-\overline{x_{c 2}}\right)^{T} w
+\end{aligned}
+\end{equation}
+综合这两点，由于协方差是一个矩阵，于是我们用将这两个值相除来得到我们的损失函数，并最大化这个值：
+\begin{equation}
+\begin{aligned}
+\hat{w}=\underset{w}{\operatorname{argmax}} J(w) & =\underset{w}{\operatorname{argmax}} \frac{\left(\overline{z_{c 1}}-\overline{z_{c 2}}\right)^{2}}{\operatorname{Var}_{z}\left[C_{1}\right]+\operatorname{Var}_{z}\left[C_{2}\right]} \\
+& =\underset{w}{\operatorname{argmax}} \frac{w^{T}\left(\overline{x_{c 1}}-\overline{x_{c 2}}\right)\left(\overline{x_{c 1}}-\overline{x_{c 2}}\right)^{T} w}{w^{T}\left(S_{1}+S_{2}\right) w} \\
+& =\underset{w}{\operatorname{argmax}} \frac{w^{T} S_{b} w}{w^{T} S_{w} w}
+\end{aligned}
+\end{equation}
+这样，我们就把损失函数和原数据集以及参数结合起来了。下面对这个损失函数求偏导，注意我们其实对 $w$ 的绝对值没有任何要求，只对方向有要求，因此只要一个方程就可以求解了:
+\begin{equation}
+\begin{array}{l}
+\frac{\partial}{\partial w} J(w)=2 S_{b} w\left(w^{T} S_{w} w\right)^{-1}-2 w^{T} S_{b} w\left(w^{T} S_{w} w\right)^{-2} S_{w} w=0 \\
+\Longrightarrow S_{b} w\left(w^{T} S_{w} w\right)=\left(w^{T} S_{b} w\right) S_{w} w \\
+\Longrightarrow w=\frac{w^TS_ww}{w^TS_bw}S_{w}^{-1}S_bw\propto S_{w}^{-1}S_bw=S_{w}^{-1}\left( \overline{x_{c1}}-\overline{x_{c2}} \right) \underset{1\text{维标量}}{\underbrace{\left( \overline{x_{c1}}-\overline{x_{c2}} \right) ^Tw}}\propto S_{w}^{-1}\left( \overline{x_{c1}}-\overline{x_{c2}} \right) 
+\end{array}
+\end{equation}
+于是 $S_w^{-1}(\overline{x_{c1}}-\overline{x_{c2}})$ 就是我们需要寻找的方向. 最后可以归一化求得单位的 $w$ 值.
+
+\section{Logistic 回归}
+有时候我们只要得到一个类别的概率，那么我们需要一种能输出 $[0,1]$ 区间的值的函数。考虑两分类模型，我们利用判别模型，希望对 $p(C|x)$ 建模，利用贝叶斯定理：
+\begin{equation}
+p\left(C_{1} \mid x\right)=\frac{p\left(x \mid C_{1}\right) p\left(C_{1}\right)}{p\left(x \mid C_{1}\right) p\left(C_{1}\right)+p\left(x \mid C_{2}\right) p\left(C_{2}\right)}
+\end{equation}
+取 $a=\ln\frac{p(x|C_1)p(C_1)}{p(x|C_2)p(C_2)}$，于是：
+\begin{equation}
+p\left(C_{1} \mid x\right)=\frac{1}{1+\exp (-a)}
+​\end{equation}	
+上面的式子叫 Logistic Sigmoid 函数, 其参数表示了两类联合概率比值的对数. 在判别式中, 不关心这个参数的具体值, Logistic 回归的模型假设是:
+\begin{equation}
+a=w^{T} x
+​\end{equation}
+于是, 通过寻找 $w$ 的最佳值可以得到在这个模型假设下的最佳模型. 概率判别模型常用最大似然估计的方式来确定参数.  对于一次观测, 获得分类 $y$ 的概率为(假定$C_1=1,C_2=0$): 
+\begin{equation}
+p(y \mid x)=p_{1}^{y} p_{0}^{1-y}
+​\end{equation}
+
+那么对于 $N$ 次独立全同的观测 MLE为:
+\begin{equation}
+\hat{w}=\operatorname{argmax}_{w} J(w)=\operatorname{argmax}_{w} \sum_{i=1}^{N}\left(y_{i} \log p_{1}+\left(1-y_{i}\right) \log p_{0}\right)
+​\end{equation}
+注意到, 这个表达式是交叉熵表达式的相反数乘 $N$, MLE 中的对数也保证了可以和指数函数相匹配, 从而在大的区间汇总获取稳定的梯度. 对这个函数求导数, 注意到: 
+\begin{equation}
+p_{1}^{\prime}=\left(\frac{1}{1+\exp (-a)}\right)^{\prime}=p_{1}\left(1-p_{1}\right)
+​\end{equation}
+则:
+\begin{equation}
+J^{\prime}(w)=\sum_{i=1}^{N} y_{i}\left(1-p_{1}\right) x_{i}-p_{1} x_{i}+y_{i} p_{1} x_{i}=\sum_{i=1}^{N}\left(y_{i}-p_{1}\right) x_{i}
+​\end{equation}
+由于概率值的非线性, 放在求和符号中时, 这个式子无法直接求解. 于是在实际训练的时候, 和感知机类似, 也可以使用不同大小的批量随机梯度上升(对于最小化就是梯度下降)来获得这个函数的极大值. 
+\section{高斯判别分析 GDA}
+生成模型中, 我们对联合概率分布进行建模, 然后采用 MAP 来获得参数的最佳值. 两分类的情况, 我们采用的假设:
+\begin{itemize}
+	\item $y\sim Bernoulli(\phi)$.
+	\item $x|y=1\sim\mathcal{N}(\mu_1,\Sigma)$. 
+	\item $x|y=0\sim\mathcal{N}(\mu_0,\Sigma)$. 
+\end{itemize}
+那么独立全同的数据集最大后验概率可以表示为:
+\begin{equation}
+\begin{aligned}
+&\operatorname{argmax}_{\phi, \mu_{0}, \mu_{1}, \Sigma} \log p(X \mid Y) p(Y)=\operatorname{argmax}_{\phi, \mu_{0}, \mu_{1}, \Sigma} \sum_{i=1}^{N}\left(\log p\left(x_{i} \mid y_{i}\right)+\log p\left(y_{i}\right)\right) \\
+&=\operatorname{argmax}_{\phi, \mu_{0}, \mu_{1}, \Sigma} \sum_{i=1}^{N}\left(\left(1-y_{i}\right) \log \mathcal{N}\left(\mu_{0}, \Sigma\right)+y_{i} \log \mathcal{N}\left(\mu_{1}, \Sigma\right)+y_{i} \log \phi+\left(1-y_{i}\right) \log (1-\phi)\right)
+\end{aligned}
+​\end{equation}
+且$\sum_{i=1}^{N} \frac{y_{i}}{\phi}+\frac{y_{i}-1}{1-\phi}=0$. 首先对 $\phi$ 进行求解，将式子对 $\phi$ 求偏导得到:
+\begin{equation}
+\phi=\frac{\sum_{i=1}^{N} y_{i}}{N}=\frac{N_{1}}{N}
+​\end{equation}
+然后求解 $\mu_1$:
+\begin{equation}
+\begin{aligned}
+\hat{\mu_{1}} & =\operatorname{argmax}_{\mu_{1}} \sum_{i=1}^{N} y_{i} \log \mathcal{N}\left(\mu_{1}, \Sigma\right) \\
+& =\operatorname{argmin}_{\mu_{1}} \sum_{i=1}^{N} y_{i}\left(x_{i}-\mu_{1}\right)^{T} \Sigma^{-1}\left(x_{i}-\mu_{1}\right)
+\end{aligned}
+​\end{equation}
+由于:
+\begin{equation}
+\sum_{i=1}^{N} y_{i}\left(x_{i}-\mu_{1}\right)^{T} \Sigma^{-1}\left(x_{i}-\mu_{1}\right)=\sum_{i=1}^{N} y_{i} x_{i}^{T} \Sigma^{-1} x_{i}-2 y_{i} \mu_{1}^{T} \Sigma^{-1} x_{i}+y_{i} \mu_{1}^{T} \Sigma^{-1} \mu_{1}
+​\end{equation}
+对其求$\mu_1$的偏导, 可得:
+\begin{equation}
+\sum_{i=1}^{N}-2 y_{i} \Sigma^{-1} x_{i}+2 y_{i} \Sigma^{-1} \mu_{1}=0
+​\end{equation}
+左边乘以 $\Sigma$ 可以得到
+\begin{equation}
+\mu_{1}=\frac{\sum_{i=1}^{N} y_{i} x_{i}}{\sum_{i=1}^{N} y_{i}}=\frac{\sum_{i=1}^{N} y_{i} x_{i}}{N_{1}}
+​\end{equation}
+求解 $\mu_0$, 由于正反例是对称的, 所以
+\begin{equation}
+\mu_{0}=\frac{\sum_{i=1}^{N}\left(1-y_{i}\right) x_{i}}{N_{0}}
+​\end{equation}
+最为困难的是求解 $\Sigma$, 我们的模型假设对正反例采用相同的协方差矩阵, 当然从上面的求解中我们可以看到, 即使采用不同的矩阵也不会影响之前的三个参数. 首先我们有:
+\begin{equation}
+\begin{aligned}
+\sum_{i=1}^{N} \log \mathcal{N}(\mu, \Sigma) & =\sum_{i=1}^{N} \log \left(\frac{1}{(2 \pi)^{p / 2}|\Sigma|^{1 / 2}}\right)+\left(-\frac{1}{2}\left(x_{i}-\mu\right)^{T} \Sigma^{-1}\left(x_{i}-\mu\right)\right) \\
+& =\text { Const }-\frac{1}{2} N \log |\Sigma|-\frac{1}{2} \operatorname{Trace}\left(\left(x_{i}-\mu\right)^{T} \Sigma^{-1}\left(x_{i}-\mu\right)\right) \\
+& =\text { Const }-\frac{1}{2} N \log |\Sigma|-\frac{1}{2} \operatorname{Trace}\left(\left(x_{i}-\mu\right)\left(x_{i}-\mu\right)^{T} \Sigma^{-1}\right) \\
+& =\text { Const }-\frac{1}{2} N \log |\Sigma|-\frac{1}{2} \operatorname{NTrace}\left(S \Sigma^{-1}\right)
+\end{aligned}
+​\end{equation}
+在这个表达式中，我们在标量上加入迹从而可以交换矩阵的顺序，对于包含绝对值和迹的表达式的导数，我们有:
+\begin{equation}
+\frac{\partial}{\partial A}(|A|)=|A| A^{-1}
+​\end{equation}
+\begin{equation}
+\frac{\partial}{\partial A} \operatorname{Trace}(A B)=B^{T}
+​\end{equation}
+因此:
+\begin{equation}
+\begin{aligned}
+&\sum_{i=1}^{N}\left(\left(1-y_{i}\right) \log \mathcal{N}\left(\mu_{0}, \Sigma\right)+y_{i} \log \mathcal{N}\left(\mu_{1}, \Sigma\right)\right] \\
+&=\text { Const }-\frac{1}{2} N \log |\Sigma|-\frac{1}{2} N_{1} \operatorname{Trace}\left(S_{1} \Sigma^{-1}\right)-\frac{1}{2} N_{2} \operatorname{Trace}\left(S_{2} \Sigma^{-1}\right) \label{con:2.11.11} 
+\end{aligned}
+​\end{equation}
+对式\eqref{con:2.11.11}求$\Sigma$的偏导, 可以得到:
+\begin{equation}
+N \Sigma^{-1}-N_{1} S_{1}^{T} \Sigma^{-2}-N_{2} S_{2}^{T} \Sigma^{-2}=0
+​\end{equation}
+其中有:
+\begin{equation}
+\frac{\partial Tr\left( S_1\varSigma ^{-1} \right)}{\partial \varSigma}=\frac{\partial Tr\left( \varSigma ^{-1}S_1 \right)}{\partial \varSigma}=-S_{1}^{T}\varSigma ^{-2}
+​\end{equation}
+其中$S_1,S_2$ 分别为两个类数据内部的协方差矩阵, 于是:
+\begin{equation}
+\Sigma=\frac{N_{1} S_{1}+N_{2} S_{2}}{N}
+​\end{equation}
+这里应用了类协方差矩阵的对称性. 于是我们就利用最大后验的方法求得了我们模型假设里面的所有参数, 根据模型, 可以得到联合分布, 也就可以得到用于推断的条件分布了.
+\section{朴素贝叶斯}
+上面的高斯判别分析的是对数据集的分布作出了高斯分布的假设, 同时引入伯努利分布作为类先验, 从而利用最大后验求得这些假设中的参数. 
+
+朴素贝叶斯队数据的属性之间的关系作出了假设, 一般地, 我们有需要得到 $p(x|y)$ 这个概率值, 由于 $x$ 有 $p$ 个维度, 因此需要对这么多的维度的联合概率进行采样, 但是我们知道这么高维度的空间中采样需要的样本数量非常大才能获得较为准确的概率近似. 
+
+在一般的有向概率图模型中, 对各个属性维度之间的条件独立关系作出了不同的假设, 其中最为简单的一个假设就是在朴素贝叶斯模型描述中的条件独立性假设. 
+\begin{equation}
+p(x \mid y)=\prod_{i=1}^{p} p\left(x_{i} \mid y\right)
+\end{equation}
+即$x_{i} \perp x_{j} \mid y, \forall i \neq j$. 于是利用贝叶斯定理, 对于单次观测:
+\begin{equation}
+p(y \mid x)=\frac{p(x \mid y) p(y)}{p(x)}=\frac{\prod_{i=1}^{p} p\left(x_{i} \mid y\right) p(y)}{p(x)}
+\end{equation}
+对于单个维度的条件概率以及类先验作出进一步的假设: 
+\begin{itemize}
+	\item $x_i$ 为连续变量: $p(x_i|y)=\mathcal{N}(\mu_i,\sigma_i^2)$.
+	\item $x_i$ 为离散变量(Categorical): $p(x_i=i|y)=\theta_i,\sum\limits_{i=1}^K\theta_i=1$.
+	\item $p(y)=\phi^{y}(1-\phi)^{1-y}$. 
+\end{itemize}
+\begin{note}
+对这些参数的估计, 常用 MLE 的方法直接在数据集上估计, 由于不需要知道各个维度之间的关系, 因此, 所需数据量大大减少了. 估算完这些参数, 再代入贝叶斯定理中得到类别的后验分布.
+分类任务分为两类，对于需要直接输出类别的任务，感知机算法中我们在线性模型的基础上加入符号函数作为激活函数，那么就能得到这个类别，但是符号函数不光滑，于是我们采用错误驱动的方式，引入 $\sum\limits_{x_i\in\mathcal{D}_{wrong}}-y_iw^Tx_i$ 作为损失函数，然后最小化这个误差，采用批量随机梯度下降的方法来获取最佳的参数值。而在线性判别分析中，我们将线性模型看作是数据点在某一个方向的投影，采用类内小，类间大的思路来定义损失函数，其中类内小定义为两类数据的方差之和，类间大定义为两类数据中心点的间距，对损失函数求导得到参数的方向，这个方向就是 $S_w^{-1}(\overline x_{c1}-\overline x_{c2})$，其中 $S_w$ 为原数据集两类的方差之和。
+
+另一种任务是输出分类的概率，对于概率模型，我们有两种方案，第一种是判别模型，也就是直接对类别的条件概率建模，将线性模型套入 Logistic 函数中，我们就得到了 Logistic 回归模型，这里的概率解释是两类的联合概率比值的对数是线性的，我们定义的损失函数是交叉熵（等价于 MLE），对这个函数求导得到 $\frac{1}{N}\sum\limits_{i=1}^N(y_i-p_1)x_i$，同样利用批量随机梯度（上升）的方法进行优化。第二种是生成模型，生成模型引入了类别的先验，在高斯判别分析中，我们对数据集的数据分布作出了假设，其中类先验是二项分布，而每一类的似然是高斯分布，对这个联合分布的对数似然进行最大化就得到了参数， $\frac{\sum\limits_{i=1}^Ny_ix_i}{N_1},\frac{\sum\limits_{i=1}^N(1-y_i)x_i}{N_0},\frac{N_1S_1+N_2S_2}{N},\frac{N_1}{N}$。在朴素贝叶斯中，我们进一步对属性的各个维度之间的依赖关系作出假设，条件独立性假设大大减少了数据量的需求。
+\end{note}

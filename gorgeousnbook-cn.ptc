@@ -1,0 +1,164 @@
+\contentsline {part}{ \@mptof {1}{基础理论} }{1}{part.1}%
+\ttl@starttoc {default@1}
+\contentsline {chapter}{\numberline {1}矩阵基础}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}映射与空间}{2}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}线性映射}{2}{subsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.1.2}线性空间}{3}{subsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.1.3}内积空间}{4}{subsection.1.1.3}%
+\contentsline {subsection}{\numberline {1.1.4}赋范空间}{5}{subsection.1.1.4}%
+\contentsline {subsection}{\numberline {1.1.5}Hilbert空间}{5}{subsection.1.1.5}%
+\contentsline {section}{\numberline {1.2}内积与范数}{6}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}向量的内积与范数}{6}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}矩阵的内积与范数}{7}{subsection.1.2.2}%
+\contentsline {subsubsection}{\numberline {1.2.2.1}诱导范数(induced norm)}{8}{subsubsection.1.2.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2.2}``元素形式”范数(entrywise norm)}{8}{subsubsection.1.2.2.2}%
+\contentsline {subsubsection}{\numberline {1.2.2.3}Schatten 范数}{9}{subsubsection.1.2.2.3}%
+\contentsline {subsubsection}{\numberline {1.2.2.4}矩阵范数的性质}{11}{subsubsection.1.2.2.4}%
+\contentsline {subsection}{\numberline {1.2.3}矩阵的性能指标}{11}{subsection.1.2.3}%
+\contentsline {subsubsection}{\numberline {1.2.3.1}二次型}{11}{subsubsection.1.2.3.1}%
+\contentsline {subsubsection}{\numberline {1.2.3.2}行列式}{12}{subsubsection.1.2.3.2}%
+\contentsline {subsubsection}{\numberline {1.2.3.3}矩阵的特征值}{13}{subsubsection.1.2.3.3}%
+\contentsline {subsubsection}{\numberline {1.2.3.4}矩阵的迹}{13}{subsubsection.1.2.3.4}%
+\contentsline {subsubsection}{\numberline {1.2.3.5}矩阵的秩}{13}{subsubsection.1.2.3.5}%
+\contentsline {subsubsection}{\numberline {1.2.3.6}矩阵的逆与伪逆}{13}{subsubsection.1.2.3.6}%
+\contentsline {chapter}{\numberline {2}泛函分析}{14}{chapter.2}%
+\contentsline {section}{\numberline {2.1}度量空间}{14}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}度量空间的定义}{14}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}收敛点列的定义和性质}{14}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}距离空间中收敛的含义}{15}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}开集和连续映射}{17}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}开球和闭球}{17}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}内点、开集、邻域、等价的距离}{17}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}连续映射}{18}{subsection.2.2.3}%
+\contentsline {section}{\numberline {2.3}闭集, 可分性, 列紧性}{19}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}距离空间的闭集}{19}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}闭集的结构}{19}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}可分的距离空间}{20}{subsection.2.3.3}%
+\contentsline {chapter}{\numberline {3}核方法}{21}{chapter.3}%
+\contentsline {section}{\numberline {3.1}再生核希尔伯特空间}{21}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}RKHS的结构}{22}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}RKHS为Hilbert空间}{22}{subsection.3.1.2}%
+\contentsline {chapter}{\numberline {4}\hskip 1em\relax 优化方法}{23}{chapter.4}%
+\contentsline {section}{\numberline {4.1}相关定义}{23}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Preliminaries on Functions}{28}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Preliminaries on Optimization}{31}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Preliminaries on Derivative}{34}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}标准问题描述}{36}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}凸优化问题}{36}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}线性规划}{37}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}二次规划}{37}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}二次约束二次规划 (QCQP)}{37}{subsection.4.2.4}%
+\contentsline {subsection}{\numberline {4.2.5}Second-Order Cone Programming (SOCP)}{37}{subsection.4.2.5}%
+\contentsline {subsection}{\numberline {4.2.6}Semidefinite Programming (SDP)}{38}{subsection.4.2.6}%
+\contentsline {section}{\numberline {4.3}消除约束和等效问题}{38}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}消除等价约束}{38}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}添加等价约束}{39}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}消除集合约束}{39}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}添加松弛变量}{39}{subsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.3.5}Epigraph Form}{39}{subsection.4.3.5}%
+\contentsline {section}{\numberline {4.4}Karush-Kuhn-Tucker (KKT) Conditions}{40}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}拉格朗日和对偶变量}{40}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}拉格朗日对偶函数}{40}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Primal Feasibility}{40}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.4.4}Dual Feasibility}{41}{subsection.4.4.4}%
+\contentsline {subsection}{\numberline {4.4.5}The Dual Problem, Weak and Strong Duality, and Slater's Condition}{41}{subsection.4.4.5}%
+\contentsline {subsection}{\numberline {4.4.6}Complementary Slackness}{44}{subsection.4.4.6}%
+\contentsline {subsection}{\numberline {4.4.7}Stationarity Condition}{44}{subsection.4.4.7}%
+\contentsline {subsection}{\numberline {4.4.8}KKT Conditions}{45}{subsection.4.4.8}%
+\contentsline {subsection}{\numberline {4.4.9}Solving Optimization by Method of Lagrange Multipliers}{46}{subsection.4.4.9}%
+\contentsline {section}{\numberline {4.5}First-Order Optimization: Gradient Methods}{46}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Gradient Descent}{46}{subsection.4.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.1.1}Step of Update}{46}{subsubsection.4.5.1.1}%
+\contentsline {section}{\numberline {4.6}ADMM}{48}{section.4.6}%
+\contentsline {chapter}{\numberline {5}\hskip 1em\relax 计算学习理论}{49}{chapter.5}%
+\contentsline {section}{\numberline {5.1}基础定义}{49}{section.5.1}%
+\contentsline {section}{\numberline {5.2}可学性}{49}{section.5.2}%
+\contentsline {section}{\numberline {5.3}有限假设空间}{50}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}一致情形}{50}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}不一致情形}{51}{subsection.5.3.2}%
+\contentsline {section}{\numberline {5.4}VC-维和Rademacher复杂度}{53}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}增长函数}{53}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}VC-维}{54}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}Rademacher复杂度}{56}{subsection.5.4.3}%
+\contentsline {section}{\numberline {5.5}稳定性}{59}{section.5.5}%
+\contentsline {part}{ \@mptof {2}{线性模型} }{1}{part.2}%
+\ttl@stoptoc {default@1}
+\ttl@starttoc {default@2}
+\contentsline {chapter}{\numberline {6}\hskip 1em\relax 线性模型}{2}{chapter.6}%
+\contentsline {section}{\numberline {6.1}基本线性模型}{2}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}最小二乘线性回归}{2}{subsection.6.1.1}%
+\contentsline {subsection}{\numberline {6.1.2}噪声为高斯分布的MLE}{3}{subsection.6.1.2}%
+\contentsline {section}{\numberline {6.2}贝叶斯线性回归}{4}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}推断}{4}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}预测}{4}{subsection.6.2.2}%
+\contentsline {section}{\numberline {6.3}Ridge 回归}{5}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Lasso 回归}{5}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Lasso求闭式解}{5}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}PGD算法求解Lasso}{6}{subsection.6.4.2}%
+\contentsline {section}{\numberline {6.5}Elastice Net 回归}{7}{section.6.5}%
+\contentsline {section}{\numberline {6.6}最小角度回归}{7}{section.6.6}%
+\contentsline {section}{\numberline {6.7}偏最小二乘回归}{7}{section.6.7}%
+\contentsline {section}{\numberline {6.8}线性判别分析}{7}{section.6.8}%
+\contentsline {section}{\numberline {6.9}Logistic 回归}{8}{section.6.9}%
+\contentsline {section}{\numberline {6.10}高斯判别分析 GDA}{9}{section.6.10}%
+\contentsline {section}{\numberline {6.11}朴素贝叶斯}{10}{section.6.11}%
+\contentsline {chapter}{\numberline {7}多目标回归}{12}{chapter.7}%
+\contentsline {section}{\numberline {7.1}多目标岭回归}{12}{section.7.1}%
+\contentsline {section}{\numberline {7.2}基于$\ell _{2,1}$正则化的鲁棒特征选择}{13}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Multi-target Sparse Latent Regression}{14}{section.7.3}%
+\contentsline {section}{\numberline {7.4}Multi-Target Regression via Robust Low-RankLearning}{14}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Multi-output HSIC Lasso}{14}{section.7.5}%
+\contentsline {subsection}{\numberline {7.5.1}问题描述}{14}{subsection.7.5.1}%
+\contentsline {subsection}{\numberline {7.5.2}HSIC Lasso}{15}{subsection.7.5.2}%
+\contentsline {chapter}{\numberline {8}支持向量机}{16}{chapter.8}%
+\contentsline {part}{ \@mptof {3}{降维} }{1}{part.3}%
+\ttl@stoptoc {default@2}
+\ttl@starttoc {default@3}
+\contentsline {chapter}{\numberline {9}\hskip 1em\relax 特征选择}{2}{chapter.9}%
+\contentsline {section}{\numberline {9.1}特征选择}{2}{section.9.1}%
+\contentsline {section}{\numberline {9.2}特征提取与流形学习}{2}{section.9.2}%
+\contentsline {section}{\numberline {9.3}主成分分析}{3}{section.9.3}%
+\contentsline {subsection}{\numberline {9.3.1} 维度灾难问题}{3}{subsection.9.3.1}%
+\contentsline {subsection}{\numberline {9.3.2} PCA基础}{3}{subsection.9.3.2}%
+\contentsline {subsection}{\numberline {9.3.3} PCA目标}{3}{subsection.9.3.3}%
+\contentsline {subsection}{\numberline {9.3.4}基于协方差矩阵的特征分解算法}{4}{subsection.9.3.4}%
+\contentsline {subsection}{\numberline {9.3.5}基于数据矩阵的奇异值分解算法}{5}{subsection.9.3.5}%
+\contentsline {subsection}{\numberline {9.3.6}主坐标分析(Principle Coordinate analysis, PCoA)算法}{6}{subsection.9.3.6}%
+\contentsline {section}{\numberline {9.4}流形学习}{6}{section.9.4}%
+\contentsline {section}{\numberline {9.5}基于Laplacian的降维}{6}{section.9.5}%
+\contentsline {subsection}{\numberline {9.5.1}Introduction}{6}{subsection.9.5.1}%
+\contentsline {subsection}{\numberline {9.5.2}Sparse Learning Models for Feature Selection}{7}{subsection.9.5.2}%
+\contentsline {subsubsection}{\numberline {9.5.2.1}Linear model}{7}{subsubsection.9.5.2.1}%
+\contentsline {subsubsection}{\numberline {9.5.2.2}Nonlinear Models}{7}{subsubsection.9.5.2.2}%
+\contentsline {section}{\numberline {9.6}基于相似性的特征选择方法}{8}{section.9.6}%
+\contentsline {subsection}{\numberline {9.6.1}Pearson相关系数}{9}{subsection.9.6.1}%
+\contentsline {subsection}{\numberline {9.6.2}Laplacian得分}{9}{subsection.9.6.2}%
+\contentsline {subsection}{\numberline {9.6.3}PCA得分}{9}{subsection.9.6.3}%
+\contentsline {subsection}{\numberline {9.6.4}基于信息度量的Filter方法}{9}{subsection.9.6.4}%
+\contentsline {part}{ \@mptof {4}{聚类模型} }{1}{part.4}%
+\ttl@stoptoc {default@3}
+\ttl@starttoc {default@4}
+\contentsline {chapter}{\numberline {10}聚类模型}{2}{chapter.10}%
+\contentsline {section}{\numberline {10.1}超图}{2}{section.10.1}%
+\contentsline {section}{\numberline {10.2}$k$-means}{3}{section.10.2}%
+\contentsline {subsection}{\numberline {10.2.1}Robust $k$-means}{3}{subsection.10.2.1}%
+\contentsline {subsection}{\numberline {10.2.2}Kernel $k$-means}{3}{subsection.10.2.2}%
+\contentsline {subsubsection}{\numberline {10.2.2.1}固定\textbf {Z}求解\textbf {V}}{3}{subsubsection.10.2.2.1}%
+\contentsline {subsubsection}{\numberline {10.2.2.2}固定\textbf {V}求解\textbf {Z}}{4}{subsubsection.10.2.2.2}%
+\contentsline {subsection}{\numberline {10.2.3}Robust Kenrel $k$-means}{4}{subsection.10.2.3}%
+\contentsline {subsection}{\numberline {10.2.4}Robust Multiple Kenrel $k$-means}{4}{subsection.10.2.4}%
+\contentsline {section}{\numberline {10.3}Isomap}{5}{section.10.3}%
+\contentsline {part}{ \@mptof {5}{实例选择模型} }{1}{part.5}%
+\ttl@stoptoc {default@4}
+\ttl@starttoc {default@5}
+\contentsline {chapter}{\numberline {11}\hskip 1em\relax 实例选择}{2}{chapter.11}%
+\contentsline {section}{\numberline {11.1}An efficient instance selection algorithm for k nearest neighbor regression}{2}{section.11.1}%
+\contentsline {section}{\numberline {11.2}SMRS}{2}{section.11.2}%
+\contentsline {subsection}{\numberline {11.2.1}Kernelized SMRS}{3}{subsection.11.2.1}%
+\contentsline {subsection}{\numberline {11.2.2}Kernelized SMRS for MTR}{3}{subsection.11.2.2}%
+\contentsline {subsection}{\numberline {11.2.3}Hilbert-Schmidt独立性准则}{3}{subsection.11.2.3}%
+\contentsline {subsection}{\numberline {11.2.4}SMRS with sparse similarity maximization}{4}{subsection.11.2.4}%
+\contentsline {subsection}{\numberline {11.2.5}基于交替优化乘子算法(ADMM)的求解(不太行)}{4}{subsection.11.2.5}%
+\contentsline {subsection}{\numberline {11.2.6}SMRS在MTR问题中的两种关系假设}{5}{subsection.11.2.6}%
+\contentsline {subsection}{\numberline {11.2.7}MTR中原型选择模型构建}{6}{subsection.11.2.7}%
+\contentsfinish 

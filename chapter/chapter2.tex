@@ -1,0 +1,626 @@
+\chapter{\quad 计算学习理论}
+\begin{center}
+    \textcolor[RGB]{255, 0, 0}{\faHeart}世界以痛吻我，要我报之以歌.\textcolor[RGB]{255, 0, 0}{\faHeart}
+\end{center}
+\rightline{——泰戈尔}
+\vspace{-5pt}
+\begin{center}
+    \pgfornament[width=0.36\linewidth,color=lsp]{88}
+\end{center}
+
+\begin{introduction}
+  \item PAC学习定义
+  \item 有限假设空间
+  \item VC-维
+  \item Rademacher复杂度
+  \item 稳定性
+\end{introduction}
+
+\section{基础定义}
+
+PAC学习理论即为概率近似正确(Probably Approximately Correct)学习理论. 通过PAC框架, 我们可以借助样本复杂度和空间复杂度来定义可学习类的概念. 首先, 给出如下定义.
+
+将所有可能的\textbf{样本}(sample)或\textbf{实例}(instance)的集合记为$\mathcal{X}$ , 所有可能的\textbf{标签}(label)或\textbf{目标值}(target value)的集合用 $\mathcal{Y}$(其有时可为\textbf{输入空间})表示.  从最简单的\textbf{二分类}问题出发, 即$\mathcal{Y}=\{0,1\}$. 给定样本集 $D=\{(\mathbf{x}_i,y_i)\}_{i=1}^{m}$, $\mathbf{x}_i \in\mathcal{X}$.  假设 $\mathcal{X}$ 中的所有样本\textbf{独立同分布}(independent and identically distributed, $\textit{i.i.d.}$)于某个未知固定分布$\mathcal{D}$.  令$h$ 为从$\mathcal{X}$ 到 $\mathcal{Y}$的一个映射, 其\textbf{泛化误差}(generalization error)可表示为:
+\begin{equation}
+E\left( h; \mathcal{D} \right) =E\left( h \right) =  P_{\mathbf{x} \sim \mathcal{D} } \left( h\left( \mathbf{x} \right) \ne y \right)
+\end{equation}
+则$h$在$D$上的\textbf{经验误差}(empirical error)为:
+\begin{equation}
+\hat{E}\left( h;D \right) =\hat{E}\left( h \right)=\frac{1}{m}\sum_{i=1}^m{\mathbb{I}_{\left( h\left( \mathbf{x}_i \right) \ne y_i \right)}}
+\end{equation}
+
+因此, $h$ 的经验误差是其在样本集$D$上的平均误差, 而泛化误差则是其在分布$D$ 上误差的期望. 由于$D$ 为$\mathcal{D}$ 的独立同分布采样, 因此$h$的经验误差的期望等于其泛化误差.
+\section{可学性}
+对于一个\textbf{概念}(concept) $ c:\mathcal{X}\rightarrow \mathcal{Y}$ 为 $\mathcal{X}$ 到 $\mathcal{Y}$  的映射函数. 其表示了实例$\mathbf{x}$ 与其对应的标签或目标值$y$之间的真实关系, 对任意的$(\mathbf{x}_i,y_i)$ 都有$c(\mathbf{x}=y)$ 成立, 则称$c$ 为目标概念.  同时, 将所有希望学到的目标概念所构成的集合称为“概念类”(concept class), 记为$\mathcal{C}$. 给出如下定义: 
+
+\begin{definition}[PAC学习]
+若存在一个算法$\mathcal{A}$ 和一个多项式函数 $poly\left( \cdot ,\cdot ,\cdot ,\cdot \right)$ 使得任意 $\epsilon >0$和 $\delta >0$, 对所有在 $\mathcal{X}$ 上的分布 $\mathcal{D} $ 和任意的目标概念 $c\in\mathcal{C}$, 以及满足$m\ge poly\left( {1}/{\epsilon},{1}/{\delta},size(\mathbf{x}),size\left( c \right) \right) $ 的任意样本规模$m$ 均有下式成立, 那么概念类$\mathcal{C}$ 是PAC可学习的(PAC-learnable).
+\begin{equation}
+P\left( E\left( h \right) \le \epsilon \right) \ge 1-\delta
+\end{equation}
+进一步地, 若$\mathcal{A}$的运行复杂度在$poly\left( {1}/{\epsilon},{1}/{\delta},size(\mathbf{x}),size\left( c \right) \right) $ 内, 则概念类$\mathcal{C}$ 为高效PAC可学习的(efficiency PAC-learnable). 当这样的算法$\mathcal{A}$存在时, 则称该算法为$\mathcal{C}$ 的一个PAC学习算法(PAC-learning algorithm).
+\end{definition}
+
+
+PAC的定义可以理解为: 如果输入到一个算法的样本点数目对于${1}/{\epsilon}$ 和 ${1}/{\delta} $ 是多项式的, 并由该算法基于这些样本点得到的假设是以\textbf{高概率}(至少$1-\delta$)\textbf{近似正确}(误差至多$\epsilon$)的, 则概念类$\mathcal{C}$ 是PAC可学习的. 其中, $\delta>0$ 用来定义\textbf{置信程度}(confidence): $1-\delta$, $\epsilon >0$ 定义\textbf{准确性}(accuracy): $1-\epsilon$. 且对任意元素$\mathbf{x} \in \mathcal{X}$ 计算表示的代表的上界记为$size(\mathbf{x})$, 将对概念$c \in \mathcal{C}$计算表示的最大代价记为$size(c)$.
+
+对于计算机算法而言, 其必然需要考虑时间复杂度,  假定学习算法$\mathcal{A}$处理每个样本的时间为常数, 则$\mathcal{A}$的时间复杂度等价于样本复杂度, 则可以给出样本复杂度的定义.  
+
+\begin{definition}[样本复杂度]
+满足PAC学习算法$\mathcal{A}$所需的 $m \ge poly ( {1}/{\epsilon},{1}/{\delta}, $
+ $size(\mathbf{x}),size(c)) $ 中最小的$m$, 称为学习算法$\mathcal{A}$ 的样本复杂度(sample complexity).
+\end{definition}
+
+样本复杂度可以理解为评估算法学习概念类所需的样本规模. 定义2表明对算法$\mathcal{A}$而言, 如果学习算法的时间成本对于${1}/{\epsilon}$ 和 ${1}/{\delta} $ 是多项式的, 当算法输入为全部样本时, 其样本规模$m$ 也是多项式的.
+
+PAC学习框架具有如下特点:
+\begin{itemize}
+  \item PAC学习框架是不依赖分布的模型(distribution-free model), 其对产生样本的分布$\mathcal{D}$并未做特别的假设.
+  \item 大多数情形下, 使得泛化称为可能的必要条件是: 用于得到误差的训练样本与测试样本产生于相同的分布$\mathcal{D}$.
+  \item PAC学习框架考虑的是概念类$\mathcal{C}$ 的可学习性, 而不是一个特殊概念的可学习性. (对于学习算法, 其概念类$\mathcal{C}$是已知的, 而目标概念$c \in \mathcal{C}$ 是未知的).
+  \item 多数情况下, 尤其是对概念的计算表示无法精确表示时, 我们往往忽略PAC定义中关于$size(\mathbf{x})$和$size(c)$的多项式约束, 而只聚焦于样本复杂度.
+\end{itemize}
+\par
+给定学习算法$\mathcal{A}$, 其所考虑的所有可能概念集合为“\textbf{假设空间}”(hypothesis space), 记为$\mathcal{H}$. 通常情形下, $\mathcal{H}$ 与 $\mathcal{C}$ 之间并不一致, 学习算法会将\textbf{自以为可能}的目标概念集中起来构成$\mathcal{H}$, 即$h\in\mathcal{H}$. 由于并不能确定$h$ 是否真是目标概念, 因此称其为“\textbf{假设}”(hypothesis). 则可得到如下两种情况:
+\par
+\begin{itemize}
+  \item \textbf{一致}(consistent)情况: 若目标概念$c\in \mathcal{H}$, 则$\mathcal{H}$中存在假设可将所有实例按照与真实标签一致的方式完全分开, 则该问题对于学习算法$\mathcal{A}$是“可分的”(separable).
+  \item \textbf{不一致}(inconsistent)情况: 若假设集中不包含目标概念, 即$c\ni \mathcal{H}$, 则$\mathcal{H}$中不存在假设可将所有实例按照与真实标签一致的方式完全分开, 则该问题对于学习算法$\mathcal{A}$是“不可分的”(non-separable).
+\end{itemize}
+\par
+在此, 分别考虑假设空间$\mathcal{H}$ 有限时对应的\textbf{一致}和\textbf{不一致}情况.
+\section{有限假设空间}
+\subsection{一致情形}
+
+在这一节, 我们在假设空间$\mathcal{H}$的势$|\mathcal{H}|$有限情况下, 且目标概念$c \in \mathcal{H}$时, 给出如下定理. 
+
+\begin{theorem}[学习界\raisebox{0.5mm}{-----}有限$\mathcal{H}$, 一致情形)]
+令 $\mathcal{H}$ 为由 $\mathcal{X}$ 到 $\mathcal{Y}$ 的映射函数组成的有限集合. 令 $\mathcal{A}$ 为学习任意目标概念 $c \in \mathcal{H}$ 的算法, 且依据独立同分布的样本集 $D$ 获得的是一个一致假设 h: $\hat{E}_D(h)=0$ . 则对于任意 $\epsilon,\delta >0$, 不等式  $P(\hat{E}_D(h)\le\epsilon)\ge 1-\delta $ 成立的条件是 :
+\begin{equation}
+m\ge \frac{1}{\epsilon}\left( \log \left| \mathcal{H} \right|+\log \frac{1}{\delta} \right)
+\end{equation}
+依据上式中的样本复杂度结果可以等价地得到如下泛化界, 对于任意  $\epsilon,\delta >0$ , 以至少 $1-\delta$ 的概率有
+\begin{equation}
+\hat{E}_D(h) \le \frac{1}{m}\left( \log \left| \mathcal{H} \right|+\log \frac{1}{\delta} \right)
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+固定 $\epsilon>0$, 由于我们并不知道算法$\mathcal{A}$ 选择了哪一个一致性假设$h\in \mathcal{H}$, 其选择假设不仅与学习算法有关, 还与训练样本集$D$有关. 因此, 需要给出一个\textbf{一致收敛界}(uniform convergence bound), 即包括$h$ 在内对于由所有一致的假设构成集合均成立的界. 我们对某些一致假设 $h\in \mathcal{H}$ 误差大于 $\epsilon $ 的概率给出其对应的界. 对任意 $\epsilon>0$ , 定义 $ \mathcal{H}_\epsilon$ 为  $ \mathcal{H}_\epsilon = \left\{h\in\mathcal{H}:\hat{E}_D(h)>\epsilon \right\} $ . 在独立同分布的训练样本 $D$ 上,  $\mathcal{H}_\epsilon$ 中的假设 $h$ 的概率一致, 其上界可以限定为: \\
+\begin{equation}
+\mathbb{P}\left[ \hat{E}_D\left( h \right) =0 \right] \le \left( 1-\epsilon \right) ^m \nonumber
+\end{equation}
+通过对上界取并集, 可以得到:
+\begin{equation}
+\begin{aligned}
+&\ \ \mathbb{P}\left[ \exists h\in \mathcal{H}_{\epsilon}:\hat{E}_D\left( h \right) =0 \right] =\mathbb{P}\left[ \hat{E}_D\left( h_1 \right) =0\lor \cdots \lor \hat{E}_D\left( h_{\left| \mathcal{H}_{\epsilon} \right|} \right) =0 \right] \\
+& \le \sum_{h\in \mathcal{H}_{\epsilon}}{\mathbb{P}\left[ \hat{E}_D\left( h \right) =0 \right]}\le \sum_{h\in \mathcal{H}_{\epsilon}}{\left( 1-\epsilon \right) ^m} \ \ \ (\text{联合上界}) \\
+& \le \left| \mathcal{H} \right|\left( 1-\epsilon \right) ^m\le \left| \mathcal{H} \right|e^{-m\epsilon} \nonumber
+\end{aligned}
+\end{equation}
+其中, 最后一个不等式是基于$1-x \le e^{-x}$ 得到的, 令上式不大于$\delta$, 即$\left| \mathcal{H} \right|e^{-m\epsilon}\le \delta$. 可得:
+\begin{equation}
+m\ge \frac{1}{\epsilon}\left( \log \left| \mathcal{H} \right|+\log \frac{1}{\delta} \right) \nonumber
+\end{equation}
+定理得证.
+\end{proof}
+\par
+该定理表明, 有限假设集情形下, 样本复杂度依赖于关于$1/\epsilon$ 和$1/\delta$的多项式, 一致算法$\mathcal{A}$ 是PAC学习算法. 且由式(5) 可知, 一致假设的泛化误差以一个随样本规模$m$的增加而减少的项为上界. 说明在给定更大规模的带标签训练样本时学习算法将获得更大的受益. 同时, 泛化误差减少的速率为 $\mathcal{O}(\frac{1}{m})$， 其上界随着$|\mathcal{H}|$的增加而增加，这说明假设集规模越大，学习就越困难. 但是其增长速率为对数型，其可以解释为表示 $\mathcal{H}$ 所需要的二进制位数. 因此上述定理保证了泛化误差由二进制表示位数 $log_2|\mathcal{H}|$和样本规模 $m$ 控制.
+
+\subsection{不一致情形}
+在更一般的情形下， 当假设集 $\mathcal{H}$ 中不存在与训练样本完全一致的假设, 即 $c \notin \mathcal{H}$.  事实上, 这在实际中更加典型和普遍, 其中的学习问题可能十分困难或概念类比学习算法使用的假设集更加复杂.  然而,  在训练样本上产生少量误差的不一致假设也可能是有用的, 且这种假设在一定条件下是可以保证学习效果的.\par
+首先, 为了在更一般的情况下保证学习效果, 我们将使用 Hoeffding's 不等式或如下的推论，它将单一假设的泛化误差与经验误差联系起来. \\
+\begin{theorem}[Hoeffding 不等式]\label{thm:Hoeffding}
+令 $X_1$, $X_2$,..., $X_m$ 是独立的随机变量, 对任意 $i \in [1,m]$， $X_i$取值为$[a_i,b_i]$. 对任意 $\epsilon>0$ ，令 $S_m=\sum_{i=1}^m{X_i}$, 则有以下不等式成立:
+\begin{equation}
+\mathbb{P}\left[ S_m-E\left[ S_m \right] \ge \epsilon \right] \le \exp \left\{ \frac{-2\epsilon ^2}{\sum\limits_{i=1}^m{\left( b_i-a_i \right) ^2}} \right\}
+\end{equation}
+\begin{equation}
+\mathbb{P}\left[ S_m-E\left[ S_m \right] \le -\epsilon \right] \le \exp \left\{ \frac{-2\epsilon ^2}{\sum\limits_{i=1}^m{\left( b_i-a_i \right) ^2}} \right\}
+\end{equation}
+\end{theorem}
+
+
+\begin{lemma}\label{lem:1}
+固定 $\epsilon>0$ , 对任意假设 $h:\mathcal{X}\rightarrow \left\{ 0,1 \right\} $， 有以下不等式成立 :
+\begin{equation}
+\mathbb{P}\left[ \hat{E}\left( h \right) -E\left( h \right) \ge \epsilon \right] \le \exp \left( -2m\epsilon ^2 \right)
+\end{equation}
+\begin{equation}
+\mathbb{P}\left[ \hat{E}\left( h \right) -E\left( h \right) \le -\epsilon \right] \le \exp \left( -2m\epsilon ^2 \right)
+\end{equation}
+根据联合约束, 可以进一步得到 :
+\begin{equation}
+\mathbb{P}\left[ \left| \hat{E}\left( h \right) -E\left( h \right) \right|\ge \epsilon \right] \le 2\exp \left( -2m\epsilon ^2 \right)
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+依据定理\ref{thm:Hoeffding}，令 $a=0,b=1$. 可得
+\begin{equation}
+\mathbb{P}\left[ \bar{X}-\mathbb{E}\left[ X \right] \ge \epsilon \right] \le \exp \left( -2m\epsilon ^2 \right)
+\end{equation}
+且 $\hat{E}\left( h \right) =\frac{1}{m}\sum_{i=1}^m{\mathbb{I}_{h\left( x_i \right) \ne c\left( x_i \right)}}$，代入上式可得
+\begin{equation}
+\mathbb{P}\left[ \hat{E}\left( h \right) -E\left( h \right) \ge \epsilon \right] \le \exp \left( -2m\epsilon ^2 \right) \nonumber
+\end{equation}
+同理可得
+\begin{equation}
+\mathbb{P}\left[ \hat{E}\left( h \right) -E\left( h \right) \le -\epsilon \right] \le \exp \left( -2m\epsilon ^2 \right) \nonumber
+\end{equation}
+根据联合界得到双边不等式
+\begin{equation}
+\mathbb{P}\left[ \left| \hat{E}\left( h \right) -E\left( h \right) \right|\ge \epsilon \right] \le 2\exp \left( -2m\epsilon ^2 \right) \nonumber
+\end{equation}
+即得证. 
+\end{proof}
+
+
+\begin{lemma}\label{lem:2}
+若训练集$D$包含$m$个从分布$\mathcal{D}$上独立同分布采样而得到的样例, $0<\epsilon<1$, 则对任意$h\in \mathcal{H}$, 下式以至少$1-\delta$ 的概率成立:
+\begin{equation}
+\hat{E}\left( h \right)-\sqrt{\frac{\ln \left( 2/\delta \right)}{2m}}\le E(h)\le \hat{E}\left( h \right)+\sqrt{\frac{\ln \left( 2/\delta \right)}{2m}}
+\end{equation}
+\end{lemma}
+
+
+引理\ref{lem:2}表明, 当样本规模$m$较大时, $h$的经验误差是其泛化误差的近似. 
+
+
+\begin{theorem}\label{thm:2}
+若$\mathcal{H}$为有限假设空间, $0<\delta<1$, 则对任意 $h\in \mathcal{H}$, 有
+\begin{equation}
+\mathbb{P}(|E(h)-\hat{E}(h)|\le\sqrt{\frac{\ln \left| \mathcal{H} \right|+\ln \left( 2/\delta \right)}{2m}})\ge 1-\delta
+\end{equation}
+\end{theorem}
+
+
+\begin{proof}
+ 令$h_1,h_2,\cdots,h_{\left| \mathcal{H} \right|}$ 为假设空间$\mathcal{H}$中的假设, 有
+\begin{equation}
+\begin{aligned}
+&\mathbb{P}\left( \exists h\in \mathcal{H}:\left| E\left( h \right) -\hat{E}\left( h \right) \right|>\epsilon \right) \\
+&=\mathbb{P}\left( \left( \left| E\left( h_1 \right) -\hat{E}\left( h_1 \right) \right|>\epsilon \right) \lor \cdots \lor \left| E\left( h_{\left| \mathcal{H} \right|} \right) -\hat{E}\left( h_{\left| \mathcal{H} \right|} \right) \right|>\epsilon \right) \\
+&\le \sum_{h\in \mathcal{H}}{\mathbb{P}\left( \left| E\left( h \right) -\hat{E}\left( h \right) \right|>\epsilon \right)} \nonumber
+\end{aligned}
+\end{equation}
+由上式可得:
+\begin{equation}
+\sum_{h\in \mathcal{H}}{\mathbb{P}\left( \left| E\left( h \right) -\hat{E}\left( h \right) \right|>\epsilon \right)}\le 2\left| \mathcal{H} \right|\exp \left( -2m\epsilon ^2 \right)
+\end{equation}
+令上式右边等于$\delta$, 则定理得证.
+\end{proof}
+
+由定理\ref{thm:2}可以看出, 误差界需要在减少经验误差和控制假设集的势之间做权衡. 依据\textbf{奥卡姆剃刀原则}(Occam's Razor principle) :  如果其他方面相同, 一个简单的假设集效果会更好.
+
+当$c\notin \mathcal{H}$时, 学习算法$\mathcal{A}$无法学到目标概念$c$ 的$\epsilon$近似, 但在给定假设空间$\mathcal{H}$时, 其中必存在一个泛化误差最小的假设, 可以将该假设的 $\epsilon$近似作为目标, 即在$\mathcal{H}$ 中泛化误差最小的假设$\textrm{arg\ min}_{h\in\mathcal{H} }E(h)$.
+
+因此, 以此为目标将PAC学习推广至$c\notin \mathcal{H}$的情况, 称为"不可知学习(agnostic learning)", 进而给出如下定义. 
+
+
+\begin{definition}[不可知PAC学习]
+令$\mathcal{H}$为一个假设集. $\mathcal{A}$ 是一个不可知PAC学习算法的条件是: 存在一个多项式函数 $poly(\cdot,\cdot,\cdot,\cdot)$ 使得对于任意 $\epsilon>0$ 以及 $\delta > 0$, 对于所有在$\mathcal{X}\times\mathcal{Y} $上的分布$D$, 对于满足 $m\ge poly(1/\epsilon,1/\delta,size(\mathbf{x}),size(c))$ 的任意样本规模有下面的不等式成立:
+\begin{equation}
+P\left( E\left( h \right) -\min_{h'\in \mathcal{H}}E\left( h' \right) \le \epsilon \right) \ge 1-\delta
+\end{equation}
+进一步地, 若算法$\mathcal{A}$可在$poly(1/\epsilon,1/\delta,size(\mathbf{x}),size(c))$内执行, 则其可以被称为一个高效的不可知PAC学习算法.
+\end{definition}
+
+
+\section{VC-维和Rademacher复杂度}
+\subsection{增长函数}
+\noindent
+\begin{definition}[增长函数]
+假设空间$\mathcal{H}$的增长函数$\Pi _{\mathcal{H}}\left( m \right) : \mathbb{N}\rightarrow\mathbb{N} $,定义为:
+\begin{equation}
+\Pi _{\mathcal{H}}\left( m \right) =\max_{\left\{ \mathbf{x}_1,\cdots ,\mathbf{x}_m \right\} \subseteq \mathcal{H}}\left| \left\{ \left( h\left( \mathbf{x}_1 \right) ,\cdots ,h\left( \mathbf{x}_m \right) \right) \left| h\in \mathcal{H} \right. \right\} \right|,\ \forall m\in \mathbb{N}
+\end{equation}
+\end{definition}
+
+\colorbox{yellow}{增长函数$\Pi _{\mathcal{H}}\left( m \right)$ 表示假设空间$\mathcal{H}$ 对$m$ 个样本所能赋予标记的最大可能结果数,} 也可以说是表示假设空间$\mathcal{H}$中的元素能够将$m$ 个点完成分类的最大方式数.这提供了一种新的衡量假设空间$\mathcal{H}$丰富度(表示能力)的方式, 且其并不依赖于样本分布, 而是一个纯粹的组合测量概念. 我们可以利用增长函数来估计经验误差与泛化误差之间的关系. \\
+\begin{theorem}
+对假设空间$\mathcal{H}$,$m\in \mathbb{N}$,$0<\epsilon<1$和任意$h\in\mathcal{H}$ 有:
+\begin{equation}
+\mathbb{P}\left( \left| E\left( h \right) -\hat{E}\left( h \right) \right|>\epsilon \right) \le 4\Pi _{\mathcal{H}}\left( 2m \right) \exp \left( -\frac{m\epsilon ^2}{8} \right)
+\end{equation}
+\end{theorem}
+
+对二分类问题, $\mathcal{H}$中的假设对$D$中实例赋予标记的每种可能结果称为对$D$的一种“\textbf{对分}”(dichotomy).
+
+若假设空间$\mathcal{H}$ 能实现实例集$D$上的所有对分, 即$\Pi _{\mathcal{H}}\left( 2m \right) = 2^m$, 则称实例集$D$能被假设空间$\mathcal{H}$ “\textbf{打散}”(shattering).
+
+\subsection{VC-维}
+VC维(Vapnik-Chervonenkis dimension)是对假设空间复杂度的度量, 其同样是一个纯粹的组合测量概念, 但其比增长函数更便于计算, 且与增长函数有直接联系. \\
+
+\begin{definition}[VC-维]
+一个假设集 $\mathcal{H}$ 的VC-维是指它能完全打散的最大集合的大小, 即
+\begin{equation}
+VC\left( \mathcal{H} \right) =\max\left\{ m:\Pi _{\mathcal{H}}\left( m \right) =2^m\right\}
+\end{equation}
+\end{definition}
+
+$VC\left( \mathcal{H} \right) =d$表明存在大小为$d$的实例集可以被假设空间$\mathcal{H}$打散(但这并不意味着所有大小为$d$或小于$d$的集合都可以被完全打散). VC-维的定义与数据分布$\mathcal{D}$无关! 即使在数据分布未知时仍能计算得到假设空间$\mathcal{H}$的VC-维.
+
+通常情况下, 若存在大小为$d$的实例集能被$\mathcal{H}$打散, 但不存在任何大小为$d+1$的实例集可以被$\mathcal{H}$打散, 则$\mathcal{H}$的VC维是$d$.
+
+根据Sauer 引理, 可以看到增长函数与VC-维之间的联系. 
+
+\begin{theorem}[Sauer 引理]\label{thm:Sauer}
+若假设空间$\mathcal{H}$的VC-维为$d$, 则对任意$m\in \mathcal{N}$有
+\begin{equation}
+\Pi _{\mathcal{H}}\left( m \right) \le \sum_{i=0}^d{\left( \begin{array}{c}
+	m\\
+	i\\
+\end{array} \right)}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+数学归纳法证明. 当$m=1,d=0$或$d=1$时, 定理成立. 假设上式对于$(m-1,d-1)$和$(m-1,d)$成立, 令$D=\left\{\mathbf{x}_1,\mathbf{x}_2,\cdots, \mathbf{x}_m\right\}$, $D'=\left\{\mathbf{x}_1,\mathbf{x}_2,\cdots, \mathbf{x}_{m-1}\right\}$, 则
+\begin{eqnarray}
+&\mathcal{H}_{\left| D \right.}=\left\{ \left( h\left( \mathbf{x}_1 \right) ,h\left( \mathbf{x}_2 \right) ,\cdots ,h\left( \mathbf{x}_m \right) \right) \left| h\in \mathcal{H} \right. \right\} \\
+& \mathcal{H}_{\left| D' \right.}=\left\{ \left( h\left( \mathbf{x}_1 \right) ,h\left( \mathbf{x}_2 \right) ,\cdots ,h\left( \mathbf{x}_{m-1} \right) \right) \left| h\in \mathcal{H} \right. \right\}
+\end{eqnarray}
+任意假设$h\in\mathcal{H}$对$\mathbf{x}_m$的分类结果为$+1$或$-1$, 因此任意出现在$\mathcal{H}_{\left| D' \right.}$中的串(分类结果)都会在$\mathcal{H}_{\left| D \right.}$中出现一次至两次. 令$\mathcal{H}_{D'\left| D \right.}$表示在$\mathcal{H}_{\left| D \right.}$中出现两次的$\mathcal{H}_{\left| D' \right.}$中的串组成的集合, 即
+\begin{eqnarray}
+ \nonumber
+\mathcal{H}_{D'\left| D \right.}=\left\{ \left( y_1,y_2,\cdots ,y_{m-1} \right) \in \mathcal{H}_{\left| D' \right.}\left| \exists h,h'\in \mathcal{H}, \right. \right.\\
+\left. \left( h\left( \mathbf{x}_i \right) =h'\left( \mathbf{x}_i \right) =y_i \right) \land \left( h\left( \mathbf{x}_m \right) \ne h'\left( \mathbf{x}_m \right) \right) ,1\le i\le m-1 \right\}
+\end{eqnarray}
+考虑到$\mathcal{H}_{D'\left| D \right.}$中的串在$\mathcal{H}_{\left| D \right.}$中出现了两次, 但在$\mathcal{H}_{\left| D \right.}$中仅出现了一次, 有
+\begin{equation}
+\left| \mathcal{H}_{\left| D \right.} \right|=\left| \mathcal{H}_{\left| D' \right.} \right|+\left| \mathcal{H}_{D'\left| D \right.} \right|
+\end{equation}
+$D'$的大小为$m-1$,由假设可得
+\begin{equation}
+\left| \mathcal{H}_{\left| D' \right.} \right|\le \Pi _{\mathcal{H}}\left( m-1 \right) \le \sum_{i=0}^d{\left( \begin{array}{c}
+	m-1\\
+	i\\
+\end{array} \right)}
+\end{equation}
+令$Q$表示能被$\mathcal{H}_{D'\left| D \right.} $打散的集合, 由$\mathcal{H}_{D'\left| D \right.} $定义可知$Q\cup \left\{ \mathbf{x}_m \right\} $ 必能被$\mathcal{H}_{\left| D \right.} $打散. 由于$\mathcal{H}$的VC-维为$d$, 因此, $\mathcal{H}_{D'\left| D \right.} $的VC-维最大为$d-1$,于是有:
+\begin{equation}
+\left| \mathcal{H}_{D'\left| D \right.} \right|\le \Pi _{\mathcal{H}}\left( m-1 \right) \le \sum_{i=0}^{d-1}{\left( \begin{array}{c}
+	m-1\\
+	i\\
+\end{array} \right)}
+\end{equation}
+由式(23) $\sim$ (25)可得
+\begin{eqnarray}
+\begin{aligned}
+ \nonumber
+\left| \mathcal{H}_{\left| D \right.} \right|\le& \sum_{i=0}^d{\left( \begin{array}{c}
+	m-1\\
+	i\\
+\end{array} \right) +\sum_{i=0}^{d-1}{\left( \begin{array}{c}
+	m-1\\
+	i\\
+\end{array} \right)}} \\  \nonumber
+=&\sum_{i=0}^d{\left( \left( \begin{array}{c}
+	m-1\\
+	i\\
+\end{array} \right) +\left( \begin{array}{c}
+	m-1\\
+	i-1\\
+\end{array} \right) \right)}\\ \nonumber
+=&\sum_{i=0}^d{\left( \frac{\left( m-1 \right) !}{i!\left( m-i-1 \right) !}+\frac{\left( m-1 \right) !}{\left( i-1 \right) !\left( m-i \right) !} \right)}\\ \nonumber
+=&\sum_{i=0}^d{\left( +\frac{\left( m-1 \right) !\left( m-i \right) +\left( m-1 \right) !i}{i!\left( m-i \right) !} \right)}\\  \nonumber
+=&\sum_{i=0}^d{\left( \frac{m!}{i!\left( m-i \right) !} \right)}=\sum_{i=0}^d{\left( \begin{array}{c}
+	m\\
+	i\\
+\end{array} \right)}  \nonumber
+\end{aligned}
+\end{eqnarray}
+其中, $\left( \begin{array}{c} m-1\\ -1\\ \end{array} \right) =0$, 由于集合$D$是任意指定的, 故定理\ref{thm:Sauer}得证.  
+\end{proof}
+
+
+\begin{corollary}
+若假设空间$\mathcal{H}$的VC-维为$d$, 则对任意整数$m\ge d$ 有:
+\begin{equation}
+\Pi _{\mathcal{H}}\left( m \right) \le \left( \frac{e\cdot m}{d} \right) ^d
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+基于Sauer 引理,可以得到
+\begin{eqnarray}
+\begin{aligned}
+\Pi _{\mathcal{H}}\left( m \right) &\le \sum_{i=0}^d{\left( \begin{array}{c}
+	m\\
+	i\\
+\end{array} \right)}
+\le \sum_{i=0}^d{\left( \begin{array}{c}
+	m\\
+	i\\
+\end{array} \right)}\left( \begin{array}{c}
+	m\\
+	d\\
+\end{array} \right) ^{d-i} \\
+&=\left( \frac{m}{d} \right) ^d\sum_{i=0}^d{\left( \begin{array}{c}
+	m\\
+	i\\
+\end{array} \right) \left( \frac{d}{m} \right)}^i
+\le \left( \frac{m}{d} \right) ^d\sum_{i=0}^m{\left( \begin{array}{c}
+	m\\
+	i\\
+\end{array} \right) \left( \frac{d}{m} \right)}^i \\
+&=\left( \frac{m}{d} \right) ^d\left( 1+\frac{d}{m} \right) ^m
+\le \left( \frac{e\cdot m}{d} \right) ^d
+\end{aligned}
+\end{eqnarray}
+在运用二项式定理后, 依据不等式$(1-x)\le e^{-x}$,可以得到最终不等式.  
+\end{proof}
+
+\begin{theorem}\label{thm:5}
+若假设空间$\mathcal{H}$的VC-维为$d$, 则对任意$m>d,0<\delta<1$和$h\in \mathcal{H}$有
+\begin{equation}
+\mathbb{P}\left( \left| E\left( h \right) -\hat{E}\left( h \right) \right|\le \sqrt{\frac{8d\ln \frac{2em}{d}+8\ln \frac{4}{\delta}}{m}} \right) \ge 1-\delta
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+令$4\Pi _{\mathcal{H}}\left( 2m \right) \exp \left( -\frac{m\epsilon ^2}{8} \right) \le 4\left( \frac{2em}{d} \right) ^d\exp \left( -\frac{m\epsilon ^2}{8} \right) =\delta$, 解得
+\begin{equation}
+\epsilon =\sqrt{\frac{8d\ln \frac{2em}{d}+8\ln \frac{4}{\delta}}{m}}
+\end{equation}
+代入定理3即得证.
+\end{proof}
+
+定理\ref{thm:5}说明, 式(28)的泛化误差只与实例规模$m$有关, 与数据分布$\mathcal{D}$和实例集$D$无关, 且其收敛速率为$O\left( \frac{1}{\sqrt{m}} \right)$. 因此, 基于VC-维的泛化误差界是\textbf{分布无关}(distribution-free)且\textbf{数据独立}(data-independent)的.
+
+\subsection{Rademacher复杂度}
+Rademacher复杂度是另一种刻画假设空间复杂度的途径, 其通过衡量一个假设集拟合随机噪声的程度, 来捕获假设空间(函数族)的丰富度. 与VC-维不同, 其在一定程度上考虑了数据分布. 
+
+\begin{definition}\label{def:6}
+考虑实值函数空间$\mathcal{F}:\mathcal{Z}\rightarrow \mathbb{R}$, 令$Z = \left\{\boldsymbol{z}_1,\boldsymbol{z}_2,\cdots,\boldsymbol{z}_m\right\}$且其样本规模固定为$m$, 其中, $\boldsymbol{z}_i \in \mathcal{Z}$. 则函数空间$\mathcal{F}$关于$Z$的经验Rademacher复杂度为:
+\begin{equation}
+\hat{R}_Z\left( \mathcal{F} \right) =\mathbb{E}_{\boldsymbol{\sigma }}\left[ \underset{f\in \mathcal{F}}{sup}\frac{1}{m}\sum_{i=1}^m{\sigma _if\left( \boldsymbol{z}_i \right)} \right]
+\end{equation}
+其中$\boldsymbol{\sigma }=\left\{\sigma_1,\sigma_2,\cdots,\sigma_m\right\}$, $\sigma_i$为独立同分布的随机向量, 其称作Rademacher变量. 
+\end{definition}
+
+经验Rademacher复杂度衡量了函数空间$\mathcal{F}$与随机噪声在集合$Z$中的相关性. 为了了解函数空间$\mathcal{F}$在$\mathcal{Z}$上关于分布$\mathcal{D}$的相关性. 因此, 给出如下定义. 
+
+\begin{definition}\label{def:7}
+对所有从$\mathcal{D}$独立同分布采样而得到的大小为$m$的集合$Z$, 函数空间$\mathcal{F}$ 关于$\mathcal{Z}$上分布$\mathcal{D}$的Rademacher复杂度 :
+\begin{equation}
+R_m\left( \mathcal{F} \right) =\mathbb{E}_{Z\subseteq \mathcal{Z}:\left| Z \right|=m}\left[ \hat{R}_Z\left( \mathcal{F} \right) \right]
+\end{equation}
+\end{definition}
+
+基于Rademacher复杂度可得到关于$\mathcal{F}$的泛化误差界. 
+
+\begin{theorem}\label{thm:6}
+对实值函数空间$\mathcal{F}: \mathcal{Z}\rightarrow [0,1]$, 根据分布$\mathcal{D}$从$\mathcal{Z}$中独立同分布采样得到示例集$Z=\left\{\boldsymbol{z}_1,\boldsymbol{z}_2,\cdots,\boldsymbol{z}_m\right\}$, $\boldsymbol{z}_i\in \mathcal{Z}$, $0<\delta<1$, 对任意$f\in \mathcal{F}$, 所以至少$1-\delta$的概率有:
+\begin{eqnarray}
+\begin{aligned}
+\mathbb{E}\left[ f\left( \boldsymbol{z} \right) \right] &\le \frac{1}{m}\sum_{i=1}^m{f\left( \boldsymbol{z}_i \right)}+2R_m\left( \mathcal{F} \right) +\sqrt{\frac{\ln \left( 1/\delta \right)}{2m}},\\
+\mathbb{E}\left[ f\left( \boldsymbol{z} \right) \right] &\le \frac{1}{m}\sum_{i=1}^m{f\left( \boldsymbol{z}_i \right)}+2\hat{R}_Z\left( \mathcal{F} \right) +3\sqrt{\frac{\ln \left( 1/\delta \right)}{2m}}
+\end{aligned}
+\end{eqnarray}
+\end{theorem}
+
+\begin{proof}
+令
+\begin{eqnarray}
+\begin{aligned}
+\hat{E}_Z\left( f \right) =& \frac{1}{m}\sum_{i=1}^m{f\left( \boldsymbol{z}_i \right)} \\
+\Phi \left( Z \right) =& \underset{f\in \mathcal{F}}{\text{sup}}\mathbb{E}\left[ f \right] -\hat{E}_Z\left( f \right)
+\end{aligned}
+\end{eqnarray}
+同时, 令$Z'$为只与$Z$有一个示例不同的训练集, 不妨设$\mathbf{z}_m\in Z$和$\mathbf{z}_{m}^{'}\in Z'$为不同示例, 可得\\
+\begin{equation}
+\begin{aligned}
+\Phi \left( Z' \right) -\Phi \left( Z \right) =&\left( \underset{f\in \mathcal{F}}{\text{sup}}\mathbb{E}\left[ f \right] -\hat{E}_{Z'}\left( f \right) \right) -\left( \underset{f\in \mathcal{F}}{\text{sup}}\mathbb{E}\left[ f \right] -\hat{E}_Z\left( f \right) \right) \\
+=&\underset{f\in \mathcal{F}}{\text{sup}}\hat{E}_Z\left( f \right) -\hat{E}_{Z'}\left( f \right)  \\
+=&\underset{f\in \mathcal{F}}{\text{sup}}\frac{f\left( \boldsymbol{z}_m \right) -f\left( \boldsymbol{z}_{m}^{'} \right)}{m}\le \frac{1}{m}
+\end{aligned}
+\end{equation}
+同理可得
+\begin{eqnarray}
+\Phi \left( Z \right) -\Phi \left( Z' \right) \le \frac{1}{m} \\
+\left| \Phi \left( Z \right) -\Phi \left( Z' \right) \right|\le \frac{1}{m}
+\end{eqnarray}
+在此引入McDiarmid不等式. \\
+\textcolor[rgb]{0.5,0.3,0.2}{\textbf{McDiarmid不等式}: 若$x_1,x_2,...,x_m$ 为$m$个独立随机变量, 且对任意$1\le i\le m$, 函数$f$满足
+\begin{equation}
+\underset{x_1,...,x_m,x_{i}^{'}}{\text{sup}}\left| f\left( x_1,...,x_m \right) -f\left( x_1,...,x_{i-1},x_{i}^{'},x_{i+1},...,x_m \right) \right|\le c_i.
+\end{equation}}
+\textcolor[rgb]{0.5,0.3,0.2}{则对任意$\epsilon >0$,有
+\begin{eqnarray}
+&P\left( f\left( x_1,...,x_m \right) -\mathbb{E}\left( f\left( x_1,...,x_m \right) \right) \ge \epsilon \right) \le \exp \left( \frac{-2\epsilon ^2}{\sum\limits_i^{}{c_{i}^{2}}} \right) \\
+&P\left( \left| f\left( x_1,...,x_m \right) -\mathbb{E}\left( f\left( x_1,...,x_m \right) \right) \right|\ge \epsilon \right) \le 2\exp \left( \frac{-2\epsilon ^2}{\sum\limits_i^{}{c_{i}^{2}}} \right)
+\end{eqnarray}}
+将$\varPhi$看作是(38)中的函数$f$则有
+\begin{equation}
+P\left(  \varPhi \left( Z \right) -\mathbb{E}_Z\left[ \varPhi \left( Z \right) \right] \ge \epsilon \right) \le \exp \left( \frac{-2\epsilon ^2}{\sum\limits_i^{}{c_{i}^{2}}} \right) \nonumber
+\end{equation}
+令$\exp \left( \frac{-2\epsilon ^2}{\varSigma _ic_{i}^{2}} \right) =\delta  $可以求得$\epsilon =\sqrt{\frac{\ln \left( 1/\delta \right)}{2m}}$,所以
+\begin{equation}
+P\left( \varPhi \left( Z \right) -\mathbb{E}_Z\left[ \varPhi \left( Z \right) \right] \ge \sqrt{\frac{\ln \left( 1/\delta \right)}{2m}} \right) \le \delta
+\end{equation}
+由逆事件的概率定义得
+\begin{equation}
+P\left( \varPhi \left( Z \right) -\mathbb{E}_Z\left[ \varPhi \left( Z \right) \right] \le \sqrt{\frac{\ln \left( 1/\delta \right)}{2m}} \right) \ge 1-\delta
+\end{equation}
+下面来估计$\mathbb{E}_Z\left[ \varPhi \left( Z \right) \right] $的上界,有
+\begin{equation}
+\begin{aligned}
+\mathbb{E}_Z\left[ \varPhi \left( Z \right) \right] &=\mathbb{E}_Z\left[ \underset{f\in \mathcal{F}}{\text{sup}}\left( \mathbb{E}\left[ f \right] -\hat{E}_Z\left( f \right) \right) \right] \\
+&=\mathbb{E}_Z\left[ \underset{f\in \mathcal{F}}{\text{sup}}\mathbb{E}_{Z'}\left[ \hat{E}_{Z'}\left( f \right) -\hat{E}_Z\left( f \right) \right] \right] \\
+&\le \mathbb{E}_{Z,Z'}\left[ \underset{f\in \mathcal{F}}{\text{sup}}\left( \hat{E}_{Z'}\left( f \right) -\hat{E}_Z\left( f \right) \right) \right]\\
+&=\mathbb{E}_{Z,Z'}\left[ \underset{f\in \mathcal{F}}{\text{sup}}\frac{1}{m}\sum_{i=1}^m{\left( f\left( \boldsymbol{z}_{i}^{'} \right) -f\left( \boldsymbol{z}_i \right) \right)} \right]\\
+&= \mathbb{E}_{\boldsymbol{\sigma },Z,Z'}\left[ \underset{f\in \mathcal{F}}{\text{sup}}\frac{1}{m}\sum_{i=1}^m{\sigma _i\left( f\left( \boldsymbol{z_{i}^{'}} \right) -f\left( \boldsymbol{z}_i \right) \right)} \right]\\
+&\le  \mathbb{E}_{\boldsymbol{\sigma},Z'}\left[ \underset{f\in \mathcal{F}}{\text{sup}}\frac{1}{m}\sum_{i=1}^m{\sigma _if\left( \boldsymbol{z}_{i}^{'} \right)} \right] +\mathbb{E}_{\boldsymbol{\sigma},Z}\left[ \underset{f\in \mathcal{F}}{\text{sup}}\frac{1}{m}\sum_{i=1}^m{-\sigma _if\left( \boldsymbol{z}_i \right)} \right]\\
+&= 2\mathbb{E}_{\boldsymbol{\sigma},Z}\left[ \underset{f\in \mathcal{F}}{\text{sup}}\frac{1}{m}\sum_{i=1}^m{\sigma _if\left( \boldsymbol{z}_i \right)} \right]\\
+&= 2R_m\left( \mathcal{F} \right)
+\end{aligned}
+\end{equation}
+\par
+\begin{itemize}
+  \item (42)$\rightarrow$(43)是在外面套了一个对服从分布$\mathcal{D}$的实例集$Z'$求期望. 且因为$\mathbb{E}_{Z'\thicksim \mathcal{D}}\left[ \hat{E}_{Z'}\left( f \right) \right] =\mathbb{E}\left[ f \right] $, 而采样出来的$Z'$和$Z$相互独立, 则有$\mathbb{E}_{Z'\thicksim \mathcal{D}}\left[ \hat{E}_{Z'}\left( f \right) \right] =\hat{E}\left[ f \right] $.
+  \item (43)$\rightarrow$(44)的不等式基于上确界函数sup是凸函数, 根据Jesen不等式\\
+  \textcolor{red}{
+ \textbf{ Jesen不等式}\ \ 对任意凸函数$f(x)$,有
+  \begin{equation}
+  f\left( \mathbb{E}\left( x \right) \right) \le \mathbb{E}\left( f\left( x \right) \right)
+  \end{equation}
+  }
+  则有
+  \begin{equation}
+  \mathbb{E}_Z\left[ \underset{f\in \mathcal{F}}{\text{sup}}\mathbb{E}_{Z'}\left[ \hat{E}_{Z'}\left( f \right) -\hat{E}_Z\left( f \right) \right] \right] \le \mathbb{E}_{Z,Z'}\left[ \underset{f\in \mathcal{F}}{\text{sup}}\left( \hat{E}_{Z'}\left( f \right) -\hat{E}_Z\left( f \right) \right) \right]
+  \end{equation}
+  其中$\mathbb{E}_{Z,Z'}$是$\mathbb{E}_Z\left[ \mathbb{E}_{Z'}\left[ \cdot \right] \right] $ 的简写形式.
+  \item (45)$\rightarrow$(46)  则引入对Rademacher随机变量的期望, 由于函数值空间为标量, 而$\sigma_i$也是标量, 即$\sigma_i \in \{-1,+1\}$, 且$\sigma_i$总可以以相同概率取到这两个值, 因此可以引入$\mathbb{E}_{\sigma}$而不影响最终结果.
+  \item (46)$\rightarrow$(47)是因为上确界之和不小于和的上确界. 同时, 因为第一项中只含有变量$\mathbf{z}'$, 则可以去掉$\mathbb{E}_{\boldsymbol{\sigma}}$; 而第二项中只含变量$\mathbf{z}$所以可以去掉$\mathbb{E}_{Z'}$.
+  \item (47)$\rightarrow$(48)利用了$\boldsymbol{\sigma}$的对称性(即$-\boldsymbol{\sigma}$的分布与$\boldsymbol{\sigma}$完全一致)去除了第二项中的负号, 又因为$Z$和$Z'$均是从$\mathcal{D}$中独立同分布采样得到的数据, 因此可以将第一项中的$\mathbf{z}_{i}^{'}$替换成$\mathbf{z}$, 将$Z'$替换成$Z$, 最后根据式(31)可得$\mathbb{E}_Z\left[ \varPhi \left( Z \right) \right] =2\mathcal{R}_m\left( \mathcal{F} \right) $, 式得证.
+\end{itemize}
+\end{proof}
+
+定理\ref{thm:6}给出了基于Rademacher复杂度的泛化误差界. 而关于Rademacher复杂度与增长函数, 有如下定理: 
+
+\begin{theorem}\label{thm:7}
+假设空间$\mathcal{H}$的Rademacher复杂度$R_m\left(\mathcal{H}\right)$与增长函数 $\Pi _{\mathcal{H}}\left( m \right) $满足
+\begin{equation}
+R_m\left( \mathcal{H} \right) \le \sqrt{\frac{2\ln \Pi _{\mathcal{H}}\left( m \right)}{m}}
+\end{equation}
+\end{theorem}
+
+由式\textrm{(27)}和\textrm{(52)}以及推论(3)可得
+
+\begin{equation}
+E\left( h \right) \le \hat{E}\left( h \right) +\sqrt{\frac{2d\ln \frac{em}{d}}{m}}+\sqrt{\frac{\ln \left( \dfrac{1}{\delta} \right)}{2m}}
+\end{equation}
+因此, 可以从Rademacher复杂度和增长函数推导出基于VC维的泛化误差界.
+
+
+\section{稳定性}
+无论是基于VC维还是Rademacher复杂度来推导泛化误差界, 所得到的结果均与具体学习算法无关, 且对所有学习算法都适用. 但若希望获得与算法有关的分析结果, 则需要采取另外的指标来进行评价和衡量, \textbf{稳定性}就是一个指标, 其考察的是在算法输入发生变化时, 输出是否会随之发生较大的变化. 学习算法的输入即训练集, 其变化可以分为以下两种.
+\par
+给定$D=\left\{ \boldsymbol{z}_1=\left( \boldsymbol{x}_1,y_1 \right) ,\cdots ,\boldsymbol{z}_m=\left\{ \boldsymbol{x}_m,y_m \right\} \right\} $, $\boldsymbol{x}_i\in \mathcal{X}$来自分布$\mathcal{D}$的独立同分布示例, 且$y_i\in \left\{ -1,+1 \right\} $. 对假设空间$\mathcal{H}:\mathcal{X}\rightarrow \left\{ -1,+1 \right\} $和学习算法$\mathfrak{L}$, 令$\mathfrak{L}_D\in \mathcal{H}$表示基于训练集$D$从假设空间$\mathcal{H}$中学到的假设,则$D$存在如下两种变化:
+\begin{itemize}
+  \item $D^{\backslash i}$表示移除$D$中第$i$个样例得到的集合: \\
+  \begin{equation}
+  D^{\backslash i}=\left\{ \boldsymbol{z}_1,\boldsymbol{z}_2,...,\boldsymbol{z}_{i-1},\boldsymbol{z}_{i+1},...,\boldsymbol{z}_m \right\}
+  \end{equation}
+  \item $D^{ i}$表示替换$D$中第$i$个样例得到的集合: \\
+\begin{equation}
+  D^{ i}=\left\{ \boldsymbol{z}_1,\boldsymbol{z}_2,...,\boldsymbol{z}_{i-1},\boldsymbol{z}_{i-1}^{'},\boldsymbol{z}_{i+1},...,\boldsymbol{z}_m \right\}
+  \end{equation}
+\end{itemize}
+其中,$\boldsymbol{z}_{i}^{'}=\left( \boldsymbol{x}_{i}^{'},y_{i}^{'} \right) $, $ \boldsymbol{x}_{i}^{'}$服从分布$\mathcal{D}$并独立于$D$.
+\par
+损失函数$\ell \left( \mathfrak{L}_D\left( \boldsymbol{x} \right) ,y \right) :\mathcal{Y}\times \mathcal{Y}\rightarrow \mathbb{R}^+ $刻画了假设$\mathfrak{L}_D$的预测标记$\mathfrak{L}_D\left( \boldsymbol{x} \right)$与真实标记$y$之间的差别, 并简记为$\ell \left( \mathfrak{L}_D,\boldsymbol{z}\right) $. 定义关于假设$\mathfrak{L}_D$的几种损失.
+\begin{itemize}
+  \item 泛化损失\\
+\begin{equation}
+\ell \left( \mathfrak{L}\ ,\mathcal{D} \right) =\mathbb{E}_{x\in \mathcal{X},\boldsymbol{z}=\left( \boldsymbol{x,}y \right)}\left[ \ell \left( \mathfrak{L}_D,\boldsymbol{z} \right) \right]
+  \end{equation}
+  \item 经验损失\\
+  \begin{equation}
+  \hat{\ell}\left( \mathfrak{L}, D \right) =\frac{1}{m}\sum_{i=1}^m{\ell \left( \mathfrak{L}_D,\boldsymbol{z}_i \right)}
+  \end{equation}
+  \item 留一(leave-one-out)损失 \\
+  \begin{equation}
+\hat{\ell}\left( \mathfrak{L}, D \right) =\frac{1}{m}\sum_{i=1}^m{\ell \left( \mathfrak{L}_{D^{\backslash i}},\boldsymbol{z}_i \right)}
+  \end{equation}
+\end{itemize}
+
+
+\begin{definition}[均匀稳定性(uniform stability)] 
+对任何$x\in \mathcal{X},\ \boldsymbol{z}=\left( \boldsymbol{x,}y \right) $. 若学习算法满足
+\begin{equation}
+\left| \ell \left( \mathfrak{L}_D,\boldsymbol{z} \right) -\ell \left( \mathfrak{L}_{D^{\backslash i}},\boldsymbol{z}_i \right)\right|\le \beta ,i=1,2,...,m,
+\end{equation}
+则称$\mathfrak{L}$关于损失函数$\ell$满足$\beta$-均匀稳定性.  \textcolor{red}{ (少一个数据,损失变化较小)}
+\end{definition}
+
+若算法$\mathfrak{L}$关于损失函数$\ell$满足$\beta$-均匀稳定性, 则:
+
+\begin{equation}
+\begin{aligned}
+&\left| \ell \left( \mathfrak{L}_D,\boldsymbol{z} \right) -\ell \left( \mathcal{L}_{D^i},\boldsymbol{z} \right) \right| \\
+\le &\left| \ell \left( \mathfrak{L}_D,\boldsymbol{z} \right) -\ell \left( \mathfrak{L}_{D^{\backslash i}},\boldsymbol{z} \right) \right|+\left| \ell \left( \mathfrak{L}_{D^i},\boldsymbol{z} \right) -\ell \left( \mathfrak{L}_{D^{\backslash i}},\boldsymbol{z} \right) \right|\\
+\le &  2\beta ,
+\end{aligned}
+\end{equation}
+移除示例的稳定性包含替换示例的稳定性. 
+\begin{theorem}\label{thm:8}
+若损失函数$\ell$有界, 即对所有$D$和$\boldsymbol{z}=\left( \boldsymbol{x}, y \right) $ 有$0\le \ell \left( \mathfrak{L}_D,\boldsymbol{z} \right) \le M$. 给定从分布$\mathcal{D}$上独立同分布采样得到的大小为$m$的示例集$D$, 若学习算法$\mathfrak{L}$满足关于损失函数$\ell$的$\beta$-均匀稳定性, 且$\ell$的上界为$M$, $0<\delta<1$, 则对任意$m\ge 1$, 以至少$1-\delta$的概率有
+\begin{equation}
+\ell \left( \mathfrak{L},\mathcal{D} \right) \le \hat{\ell}\left( \mathfrak{L},D \right) +2\beta +\left( 4m\beta +M \right) \sqrt{\frac{\ln \left( \dfrac{1}{\delta} \right)}{2m}},
+\end{equation}
+
+\begin{equation}
+ \ell \left( \mathfrak{L},\mathcal{D} \right) \le \ell _{loo}\left( \mathfrak{L},D \right) +\beta +\left( 4m\beta +M \right) \sqrt{\frac{\ln \left( \dfrac{1}{\delta} \right)}{2m}}.
+\end{equation}
+由(61)得: 经验损失与泛化误差之间差别的收敛为$\beta \sqrt{m}$, 若$\beta =\mathcal{O}\left( \frac{1}{m} \right) $, 则可保证收敛率为$\mathcal{O}\left( \frac{1}{m} \right)$. 
+\end{theorem}
+
+\begin{itemize}
+  \item \textcolor{red}{学习算法稳定性分析关注的是: \ $\left| \hat{\ell}\left( \mathfrak{L},D \right) -\ell \left( \mathfrak{L},\mathcal{D} \right) \right|$.}
+ \item \textcolor{red}{假设空间复杂度分析关注的是: \ $\text{sup}_{h\in \mathcal{H}}\left| \widehat{E}\left( h \right) -E\left( h \right) \right|$.}
+\end{itemize}
+
+
+稳定性分析不必考虑假设空间中所有可能的假设, 只需根据算法自身的特性(稳定性)来讨论输出假设$\mathfrak{L}_D$的泛化误差界. 则稳定性与可学习性之间何种关系?
+\par
+假设$\beta \sqrt{m}\rightarrow 0$, 保证稳定的学习算法$\mathfrak{L}$具有一定的泛化能力, 即经验损失收敛于泛化损失. 假定$\beta =\frac{1}{m}$, 代入式(1.61)可得
+\begin{equation}
+\ell \left( \mathfrak{L},\mathcal{D} \right) \le \hat{\ell}\left( \mathfrak{L},\mathcal{D} \right) +\frac{2}{m}+\left( 4+M \right) \sqrt{\frac{\ln \left( \dfrac{1}{\delta} \right)}{2m}}
+\end{equation}
+对于损失函数$\ell$, 若学习算法$\mathfrak{L}$所输出的假设满足经验损失最小化, 称算法$\mathfrak{L}$满足经验风险最小化(Emprical Risk Minimization)原则. 简称算法是ERM的. 且存在如下定理: 
+
+\begin{theorem}\label{thm:9}
+ 若学习算法$\mathfrak{L}$是ERM且稳定的, 则假设空间$\mathcal{H}$可学习. 
+ \end{theorem}
+ 
+ \textcolor{blue}{ 学习算法的稳定性能导出假设空间的科学性, 稳定性与假设空间并非无关, 由稳定性的定义可知两者通过损失函数$\ell$联系起来. }
+ 
+\begin{proof}
+令$g$表示$\mathcal{H}$中具有最小泛化损失的假设, 即
+ \begin{equation}
+ \ell \left( g,\mathcal{D} \right) =\min_{h\in \mathcal{H}}\ell \left( h,\mathcal{D} \right) .
+ \end{equation}
+ 再令
+\begin{equation}
+  \epsilon '=\frac{\epsilon}{2} \nonumber
+\end{equation}
+\begin{equation}
+  \frac{\delta}{2}=2\exp \left( -2m\left( \epsilon ' \right) ^2 \right) \nonumber
+\end{equation}
+将$\epsilon '=\frac{\epsilon}{2}$代入$\frac{\delta}{2}=2\exp \left( -2m\left( \epsilon ' \right) ^2 \right)$可以解得$m=\frac{2}{\epsilon ^2}\ln \frac{4}{\delta}$, 由Hoeffding不等式, 有
+\begin{equation}
+P\left( \left| \frac{1}{m}\sum_{i=1}^m{x_i}-\frac{1}{m}\sum_{i=1}^m{\mathbb{E}\left( x_i \right)} \right|\ge \epsilon \right) \le 2\exp \left( -2m\epsilon ^2 \right)
+\end{equation}
+其中$\frac{1}{m}\sum\limits_{i=1}^m{\mathbb{E}\left( x_i \right) =\ell \left( g,\mathcal{D} \right)}$, $\frac{1}{m}\sum\limits_{i=1}^m{x_i=\hat{\ell}\left( g,\mathcal{D} \right)}$, 代入可得
+\begin{equation}
+P\left( \left| \ell \left( g,\mathcal{D} \right) -\hat{\ell}\left( g,D \right) \right|\ge \frac{\epsilon}{2} \right) \le \frac{\delta}{2}
+\end{equation}
+根据逆事件的概率可得
+\begin{equation}
+P\left( \left| \ell \left( g,\mathcal{D} \right) -\hat{\ell}\left( g,D \right) \right|\le \frac{\epsilon}{2} \right) \ge 1- \frac{\delta}{2}
+\end{equation}
+令式(1.63)中
+\begin{equation}
+\frac{2}{m}+\left( 4+M \right) \sqrt{\frac{\ln \left( \dfrac{2}{\delta} \right)}{2m}}=\frac{\epsilon}{2}
+\end{equation}
+可以求解出
+\begin{equation}
+\sqrt{m}=\frac{\left( 4+M \right) \sqrt{\frac{\ln \left( \dfrac{2}{\delta} \right)}{2}}+\sqrt{\left( 4+M \right) ^2\cdot \frac{\ln \left( \dfrac{2}{\delta} \right)}{2}-4\cdot \frac{\epsilon}{2}\cdot \left( -2 \right)}}{2\cdot \frac{\epsilon}{2}}
+\end{equation}
+则有$m=\mathcal{O}\left( \frac{1}{\epsilon ^2}\ln \frac{1}{\delta} \right) $使
+\begin{equation}
+\ell \left( \mathfrak{L},\mathcal{D} \right) \le \hat{\ell}\left( \mathfrak{L},D \right) +\frac{\epsilon}{2}
+\end{equation}
+以至少$1-\dfrac{1}{\delta}$的概率成立, 从而可得
+\begin{equation}
+\begin{aligned}
+\ell \left( \mathfrak{L},\mathcal{D} \right) -\ell \left( g,\mathcal{D} \right) &\le \hat{\ell}\left( \mathfrak{L},D \right) +\frac{\epsilon}{2}-\left( \hat{\ell}\left( g,D \right) -\frac{\epsilon}{2} \right)\\
+&\le \hat{\ell}\left( \mathfrak{L},D \right) -\hat{\ell}\left( g,D \right) +\epsilon \\
+& \le \epsilon
+\end{aligned}
+\end{equation}
+以至少$1-\delta$的概率成立, 定理9得证.
+\end{proof}

@@ -1,0 +1,32 @@
+\chapter{\quad 数学基础}
+\begin{center}
+    \textcolor[RGB]{255, 0, 0}{\faHeart}世界以痛吻我，要我报之以歌.\textcolor[RGB]{255, 0, 0}{\faHeart}
+\end{center}
+\rightline{——泰戈尔}
+\vspace{-5pt}
+\begin{center}
+    \pgfornament[width=0.36\linewidth,color=lsp]{88}
+\end{center}
+\section{向量空间、线性映射与Hilbert空间}
+\subsection{向量空间}
+
+\begin{definition}[向量空间]
+以向量为元素的集合$V$称为向量空间, 若加法运算定义为两个向量之间的加法, 乘法运算定义为向量与标量域$S$中的标量之间的乘法, 且满足以下2个闭合性和8个公理:
+\begin{itemize}
+\item 加法的闭合性: 若$\mathbf{x}\in V$和$\mathbf{y}\in V$, 则$\mathbf{x}+\mathbf{y}\in V$;
+\item 标量乘法的闭合性: 若$a_1$是一个标量, $\mathbf{y}\in V$, 则$a_1\mathbf{y}\in V$;
+\item 加法交换律: $\mathbf{x}+\mathbf{y} = \mathbf{y}+\mathbf{x}, \forall \mathbf{x},\mathbf{y} \in V $;
+\item 加法结合律: $\mathbf{x}+(\mathbf{y}+\mathbf{w}) = (\mathbf{x}+\mathbf{y})+\mathbf{w} $, $\forall \mathbf{x},\mathbf{y},\mathbf{x} \in V$;
+\item 零向量存在性: 在$V$中存在一个零向量$\mathbf{0}$, 使得对于任意向量$\mathbf{y}\in V$, 恒有$\mathbf{y}+\mathbf{0} = \mathbf{y}$;
+\item 负向量存在性: 给定一个向量$\mathbf{y}\in V$, 存在另一个向量$-\mathbf{y}\in V$, 使得$\mathbf{y}+(-\mathbf{y})=0=(-\mathbf{y})+\mathbf{y}$;
+\item 标量乘法结合律: $a(b\mathbf{y})=(ab)\mathbf{y}$;
+\item 标量乘法分配率: $a(\mathbf{x}+\mathbf{y})= a\mathbf{x}+a\mathbf{y}$;
+\item 标量乘法单位律: $1\mathbf{y}=\mathbf{y}$对任意$\mathbf{y}\in V$均成立.
+\end{itemize}
+\end{definition}
+定义1.1给出的向量空间也是线性空间. 
+\begin{definition}
+令$V$和$W$是两个向量空间, 若$W$是$V$中一个非空子集合, 则称子集合$W$是$V$中的一个子空间. 
+\end{definition}
+$n$维零向量是$n$阶向量空间的一个子空间. \boldsymbol{x}
+\begin{definition}
