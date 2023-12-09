@@ -21,7 +21,7 @@
 % \usepackage{mathtools}
 % \usepackage{MnSymbol}
 \usepackage{amssymb}
-\usepackage{biblatex}
+\usepackage[backend=biber]{biblatex}
 \addbibresource{reference.bib}
 \usepackage{array}
 \usepackage{amsmath}
@@ -1682,14 +1682,12 @@ The matrix $\boldsymbol{K} \in \mathbb{R}^{n \times n}$ is a Gram matrix, also k
 \boldsymbol{K}(i,j) := k(\boldsymbol{x}_i, \boldsymbol{x}_j), \quad \forall i,j \in \{1, \dots, n\}.
 \end{align}
 \end{definition}
-Here, we defined the square kernel matrix applied on a set of $n$ data instances; hence, the kernel is a $n \times n$ matrix. We may also have a kernel matrix between two sets of data instances. This will be explained more in Section \ref{section_kernelization_techniques}. 
-Moreover, note that the kernel matrix can be computed using the inner product between pulled data to the feature space. This will be explained in detail in Section \ref{section_feature_map}.
+这里，我们定义了应用于一组$n$个数据实例的平方核矩阵；因此，核是一个$n \times n$的矩阵。我们也可以有两组数据实例之间的核矩阵。这将在第\ref{section_kernelization_techniques}节中更详细地解释。
+核矩阵可以使用将数据映射到特征空间的内积来计算。这将在第\ref{section_feature_map}节中详细解释。
 
 
 
-\subsection{Hilbert, Banach, $L_p$, 与 Sobolev 空间}\label{section_spaces}
-
-Before defining the RKHS and details of kernels, we need to introduce Hilbert, Banach, $L_p$, and Sobolev spaces, which are well-known spaces in functional analysis \cite{conway2007course}. 
+\subsection{Hilbert,Banach,$L_p$,与Sobolev空间}\label{section_spaces}
 
 \begin{definition}[Metric Space]
 A metric space is a set where a metric, for measuring the distance between instances of set, is defined on it. 
@@ -1717,31 +1715,28 @@ A space is compact if it is closed (i.e., it contains all its limit points) and 
 \begin{definition}[Hilbert Space \cite{reed1972methods}] \label{definition_Hilbert_space}
 A Hilbert space $\mathcal{H}$ is an inner product space that is a complete metric space with respect to the norm or distance function induced by the inner product. 
 \end{definition}
-The Hilbert space generalizes the Euclidean space to a finite or infinite dimensional space. Usually, the Hilbert space is high dimensional. By convention in machine learning, unless otherwise stated, Hilbert space is also referred to as the \textit{feature space}. By feature space, researchers often specifically mean the RKHS space which will be introduced in Section \ref{section_RKHS}.
-
+% The Hilbert space generalizes the Euclidean space to a finite or infinite dimensional space. Usually, the Hilbert space is high dimensional. By convention in machine learning, unless otherwise stated, Hilbert space is also referred to as the \textit{feature space}. By feature space, researchers often specifically mean the RKHS space which will be introduced in Section \ref{section_RKHS}.
+Hilbert空间将欧几里得空间推广到有限或无限维空间。通常，Hilbert空间是高维的。按照机器学习的惯例，除非另有说明，Hilbert空间也被称为\textit{特征空间}。研究人员通常指的是RKHS空间，这将在第\ref{section_RKHS}节中介绍。
 % https://en.wikipedia.org/wiki/Banach_space
-\begin{definition}[Banach Space \cite{beauzamy1982introduction}]
-A Banach space is a complete vector space equipped with a norm. 
+\begin{definition}[Banach 空间 \cite{beauzamy1982introduction}]
+Banach空间是一个赋范的完备向量空间. 
 \end{definition}
 
 
-\begin{remark}[Difference of Hilbert and Banach Spaces]
-Hilbert space is a special case of Banach space equipped with a norm defined using an inner product notion. All Hilbert spaces are Banach spaces but the converse is not true. 
+\begin{remark}[Hilbert 空间与 Banach 空间的区别]
+Hilbert空间是一种特殊情况的Banach空间，它通过使用内积概念定义了一个范数。所有的Hilbert空间都是Banach空间，但反之不成立。
 \end{remark}
-
-
-Suppose $\mathbb{R}^n$, $\mathcal{H}$, $\mathbb{B}$, $\mathcal{M}_c$, $\mathcal{M}$, $\mathbb{T}$ denote the Euclidean space, Hilbert space, Banach space, complete metric space, metric space, and topological space (containing both open and closed sets), respectively. Then, we have:
+假设$\mathbb{R}^n$、$\mathcal{H}$、$\mathbb{B}$、$\mathcal{M}_c$、$\mathcal{M}$和$\mathbb{T}$分别表示欧几里得空间、Hilbert空间、Banach空间、完备度量空间、度量空间和拓扑空间（包含开集和闭集）。那么我们有：
 \begin{align}
 \mathbb{R}^n \subset \mathcal{H} \subset \mathcal{B} \subset \mathcal{M}_c \subset \mathcal{M} \subset \mathbb{T}.
 \end{align}
 
 \begin{definition}[$L_p$ Space]
-Consider a function $f$ with domain $[a, b]$. 
-For $p >0$, let the $L_p$ norm be defined as:
+考虑定义在区间$[a, b]$上的函数$f$. 对于$p >0$，$L_p$范数定义如下：
 \begin{align}
 \|f\|_p := \Big(\int |f(\boldsymbol{x})|^p\, d\boldsymbol{x}\Big)^{\frac{1}{p}}.
 \end{align}
-The $L_p$ space is defined as the set of functions with bounded $L_p$ norm:
+$L_p$ 空间定义为具有有界 $L_p$ 范数的函数集合：
 \begin{align}
 L_p(a,b) := \{f:[a,b] \rightarrow \mathbb{R}\,\, |\,\, \|f\|_p < \infty \}.
 \end{align}
@@ -1753,56 +1748,57 @@ Sobolev空间是一个配备$L_p$范数和导数的函数向量空间:
 \begin{align}
 \mathcal{W}_{m,p} := \{f \in L_p(0,1)\, |\, D^m f \in L_p(0,1) \},
 \end{align}
-where $D^m f$ denotes the $m$-th order derivative. 
+其中 $D^m f$ 表示函数 $f$ 的 $m$ 阶导数。
 \end{definition}
-Note that the Sobolev spaces are RKHS with some specific kernels \cite{novak2018reproducing}. RKHS will be explained in Section \ref{section_RKHS}.
+请注意，Sobolev空间是具有一些特定核函数的RKHS（Replicating Kernel Hilbert Spaces）\cite{novak2018reproducing}。在第\ref{section_RKHS}节中将对RKHS进行解释。
 
 \subsection{再生核希尔伯特空间}\label{section_RKHS}
 
 \subsubsection{RKHS的定义}
 
-Reproducing Kernel Hilbert Space (RKHS), first proposed in \cite{aronszajn1950theory}, is a special case of Hilbert space with some properties. It is a Hilbert space of functions with reproducing kernels \cite{berlinet2011reproducing}. 
-After the initial work on RKHS \cite{aronszajn1950theory}, another work \cite{aizerman1964theoretical} developed the RKHS concepts.
-In the following, we introduce this space. 
+再生核希尔伯特空间（RKHS），最早在\cite{aronszajn1950theory}中提出，是Hilbert空间的一种特殊情况，具有一些特性。它是具有再生核函数的函数的Hilbert空间\cite{berlinet2011reproducing}。在关于RKHS的最初工作\cite{aronszajn1950theory}之后，另一篇论文\cite{aizerman1964theoretical}发展了RKHS的概念。
 
 \begin{definition}[RKHS \cite{aronszajn1950theory,berlinet2011reproducing}]\label{definition_RKHS}
-A Reproducing Kernel Hilbert Space (RKHS) is a Hilbert space $\mathcal{H}$ of functions $f: \mathcal{X} \rightarrow \mathbb{R}$ with a reproducing kernel $k: \mathcal{X}^2 \rightarrow \mathbb{R}$ where $k(\boldsymbol{x}, .) \in \mathcal{H}$ and $f(\boldsymbol{x}) = \langle\,k(\boldsymbol{x},.),f\rangle$. 
+再生核希尔伯特空间（RKHS）是一个Hilbert空间 $\mathcal{H}$，其中包含函数 $f: \mathcal{X} \rightarrow \mathbb{R}$ 和一个再生核函数 $k: \mathcal{X}^2 \rightarrow \mathbb{R}$，满足 $k(\boldsymbol{x}, .) \in \mathcal{H}$ 且 $f(\boldsymbol{x}) = \langle\,k(\boldsymbol{x},.),f\rangle$。
 \end{definition}
 
-The RKHS is explained in more detail in the following. 
-Consider the kernel function $k(\boldsymbol{x}, \boldsymbol{y})$ which is a function of two variables. 
-Suppose, for $n$ points, we fix one of the variables to have $k(\boldsymbol{x}_1, \boldsymbol{y}), k(\boldsymbol{x}_2, \boldsymbol{y}), \dots, k(\boldsymbol{x}_n, \boldsymbol{y})$.
-These are all functions of the variable $\boldsymbol{y}$. 
-RKHS is a function space which is the set of all possible linear combinations of these functions \cite{kimeldorf1971some}, \cite{mercer1909functions}:
+在接下来的内容中，将更详细地解释RKHS。考虑一个具有两个变量的核函数 $k(\boldsymbol{x}, \boldsymbol{y})$。假设对于 $n$ 个点，我们固定其中一个变量，得到 $k(\boldsymbol{x}_1, \boldsymbol{y}), k(\boldsymbol{x}_2, \boldsymbol{y}), \dots, k(\boldsymbol{x}_n, \boldsymbol{y})$。这些都是关于变量 $\boldsymbol{y}$ 的函数。RKHS 是一个函数空间，它是所有这些函数的可能线性组合的集合\cite{kimeldorf1971some}，\cite{mercer1909functions}：
+
 \begin{align}\label{equation_RKHS}
 \mathcal{H} :=\! \Big\{f(.) = \sum_{i=1}^n \alpha_i\, k(\boldsymbol{x}_i, .)\Big\} \!\overset{(a)}{=}\! \Big\{f(.) = \sum_{i=1}^n \alpha_i\, k_{\boldsymbol{x}_i}(.)\Big\},
 \end{align}
-where $(a)$ is because we define $k_{\boldsymbol{x}}(.) := k(\boldsymbol{x}, .)$.
-This equation shows that the bases of an RKHS are kernels.
-The proof of this equation is obtained by considering both Eqs. (\ref{equation_Mercer_theorem_kernel_representation}) and (\ref{equation_kernel_inner_product}) together (n.b. for better organization, it is better that we provide those equations later). 
-It is also noteworthy that this equation will also appear in Theorem \ref{theorem_representer_theorem}.
+这里的 $(a)$ 表示我们定义 $k_{\boldsymbol{x}}(.) := k(\boldsymbol{x}, .)$。这个等式表明，RKHS 的基是核函数。
+证明这个等式是通过同时考虑式子（\ref{equation_Mercer_theorem_kernel_representation}）和（\ref{equation_kernel_inner_product}）得出的。值得注意的是，这个等式也会出现在定理\ref{theorem_representer_theorem}中。
+% where $(a)$ is because we define $k_{\boldsymbol{x}}(.) := k(\boldsymbol{x}, .)$.
+% This equation shows that the bases of an RKHS are kernels.
+% The proof of this equation is obtained by considering both Eqs. (\ref{equation_Mercer_theorem_kernel_representation}) and (\ref{equation_kernel_inner_product}) together (n.b. for better organization, it is better that we provide those equations later). 
+% It is also noteworthy that this equation will also appear in Theorem \ref{theorem_representer_theorem}.
 
-According to Eq. (\ref{equation_RKHS}), every function in the RKHS can be written as a linear combination. Consider two functions in this space represented as $f = \sum_{i=1}^n \alpha_i\, k(\boldsymbol{x}_i, \boldsymbol{y})$ and $g = \sum_{j=1}^n \beta_j\, k(\boldsymbol{x}, \boldsymbol{y}_j)$. Hence, the inner product in RKHS is calculated as:
+根据式（\ref{equation_RKHS}），在RKHS中的每个函数都可以写成线性组合形式。考虑该空间中的两个函数表示为 $f = \sum_{i=1}^n \alpha_i\, k(\boldsymbol{x}_i, \boldsymbol{y})$ 和 $g = \sum_{j=1}^n \beta_j\, k(\boldsymbol{x}, \boldsymbol{y}_j)$。因此，RKHS 中的内积可以计算为：
+
 \begin{align}
 \langle f,g \rangle_k &\overset{(\ref{equation_RKHS})}{=} \Big\langle \sum_{i=1}^n \alpha_i\, k(\boldsymbol{x}_i, .), \sum_{j=1}^n \beta_j\, k(\boldsymbol{y}_j, .) \Big\rangle_k \nonumber \\
 &\overset{(a)}{=} \Big\langle \sum_{i=1}^n \alpha_i\, k(\boldsymbol{x}_i, .), \sum_{j=1}^n \beta_j\, k(., \boldsymbol{y}_j) \Big\rangle_k \nonumber \\
 &= \sum_{i=1}^n \sum_{j=1}^n \alpha_i\, \beta_j\, k(\boldsymbol{x}_i, \boldsymbol{y}_j), \label{equation_RKHS_inner_product}
 \end{align}
-where $(a)$ is because kernel is symmetric (it will be proved in Section \ref{section_kernel_characteristics}).
-Hence, the norm in RKHS is calculated as:
+这里的 $(a)$ 是因为核函数是对称的（这将在第 \ref{section_kernel_characteristics} 节中证明）。
+因此，RKHS 中的范数可以计算为：
 \begin{align}
 &\|f\|_k := \sqrt{\langle f,f \rangle_k}.
 \end{align}
-The subscript of norm and inner product in RKHS has various notations in the research papers. Some most famous notations are $\langle f,g \rangle_k$, $\langle f,g \rangle_\mathcal{H}$, $\langle f,g \rangle_{\mathcal{H}_k}$, $\langle f,g \rangle_\mathcal{F}$ where $\mathcal{H}_k$ denotes the Hilbert space associated with kernel $k$ and $\mathcal{F}$ stands for the feature space because RKHS is sometimes referred to as the feature space.
+RKHS 中范数和内积的下标有多种表示方法。其中一些最常见的表示法包括 $\langle f,g \rangle_k$、$\langle f,g \rangle_\mathcal{H}$、$\langle f,g \rangle_{\mathcal{H}_k}$ 和 $\langle f,g \rangle_\mathcal{F}$，其中 $\mathcal{H}_k$ 表示与核函数 $k$ 相关联的希尔伯特空间，而 $\mathcal{F}$ 则代表特征空间，因为 RKHS 有时也被称为特征空间。
 
 % useful video: https://www.youtube.com/watch?v=EoM_DF3VAO8
 \begin{remark}[RKHS Being Unique for a Kernel]
-Given a kernel, the corresponding RKHS is unique (up to isometric isomorphisms). Given an RKHS, the corresponding kernel is unique. In other words, each kernel generates a new RKHS. 
+给定一个核函数，对应的RKHS是唯一的（在等距同构的意义下）。给定一个RKHS，对应的核函数也是唯一的。换句话说，每个核函数都会生成一个新的RKHS。
 \end{remark}
 
 \begin{remark}
-As we also saw in Mercer's theorem, the bases of RKHS space is the eigenfunctions $\{\psi_i(.)\}_{i=1}^\infty$ which are functions themselves. This, along with Eq. (\ref{equation_RKHS}), show that the RKHS space is a space of functions and not a space of vectors. In other words, the basis vectors of RKHS are basis functions named eigenfunctions. 
-Because the RKHS is a space of functions rather than a space of vectors, we usually do not know the exact location of pulled points to the RKHS but we know the relation of them as a function. This will be explained more in Section \ref{section_feature_map} and Fig. \ref{figure_pulling}. 
+% As we also saw in Mercer's theorem, the bases of RKHS space is the eigenfunctions $\{\psi_i(.)\}_{i=1}^\infty$ which are functions themselves. This, along with Eq. (\ref{equation_RKHS}), show that the RKHS space is a space of functions and not a space of vectors. In other words, the basis vectors of RKHS are basis functions named eigenfunctions. 
+% Because the RKHS is a space of functions rather than a space of vectors, we usually do not know the exact location of pulled points to the RKHS but we know the relation of them as a function. This will be explained more in Section \ref{section_feature_map} and Fig. \ref{figure_pulling}. 
+正如Mercer定理中所看到的，RKHS空间的基是特征函数 $\{\psi_i(.)\}_{i=1}^\infty$，它们本身就是函数。这与式（\ref{equation_RKHS}）一起表明，RKHS空间是一个函数空间，而不是向量空间。换句话说，RKHS的基向量是被称为特征函数的基函数。
+
+由于RKHS是一个函数空间而不是向量空间，通常我们并不知道将点映射到RKHS中的确切位置，但我们知道它们之间的关系是作为一个函数。这将在第 \ref{section_feature_map} 节和图 \ref{figure_pulling} 中进一步解释。
 \end{remark}
 
 \subsubsection{再生性质}
@@ -3088,7 +3084,7 @@ After development of HSIC and MMD measures, it was found out that they are equiv
 
 
 
-\subsection{分布的核嵌入 (Kernel Mean Embedding)}\label{section_kernel_embedding_distributions}
+\subsection{核均值嵌入 (Kernel Mean Embedding)}\label{section_kernel_embedding_distributions}
 
 % https://en.wikipedia.org/wiki/Kernel_embedding_of_distributions
 
@@ -4026,7 +4022,7 @@ Here, we discussed only real derivatives. When working with complex data (with i
 一般优化问题可描述为: 考虑函数$f:\mathbb{R}^d\to\mathbb{R},f:\boldsymbol{x}\mapsto f(\boldsymbol{x})$, 函数定义域为$\mathcal{D}$, 其中$\boldsymbol{x}\in\mathcal{D},\boldsymbol{x}\in\mathbb{R}^d$.
 考虑以下成本(损失)函数$f(.)$无约束最小化,
 \begin{equation}
-	\underset{\boldsymbol{x}}{\operatorname*{minimize}}\quad f(\boldsymbol{x}),
+	\underset{\boldsymbol{x}}{\operatorname*{minimize}}\quad f(\boldsymbol{x}), \label{equation_optimization_problem_unconstrained}
 \end{equation}
 优化问题可以受到约束，其中优化变量$\boldsymbol{x}$除了在函数域中之外还应该满足一些等式和(或)不等式约束，同时最小化函数$f(.)$. 考虑一个约束优化问题，我们想要最小化函数$f(x)$，同时满足 $m_1 $不等式约束和$ m_2 $等式约束：
 \begin{equation}
@@ -4103,7 +4099,7 @@ QCQP问题的形式为:
 where $\boldsymbol{P}, \boldsymbol{M}_i \succ \boldsymbol{0}, \forall i$, the objective function and the inequality constraints are quadratic, and equality constraints are affine functions. 
 The feasible set of a QCQP problem is intersection of $m_1$ ellipsoids and an affine set, while the cost is curvy (quadratic).
 
-\subsection{Second-Order Cone Programming (SOCP)}
+\subsection{二阶锥规划 (SOCP)}
 
 A SOCP problem is of the form:
 \begin{equation}
@@ -4117,7 +4113,7 @@ A SOCP problem is of the form:
 \end{equation}
 where the inequality constraints are norm of an affine function being less than an affine function. The constraint $\|\boldsymbol{A}_i \boldsymbol{x} + \boldsymbol{b}_i\|_2 - \boldsymbol{c}_i^\top \boldsymbol{x} - d_i \leq 0$ is called the \textit{second-order cone} whose shape is like an ice-cream cone. 
 
-\subsection{Semidefinite Programming (SDP)}
+\subsection{半正定规划 (SDP)}
 
 A SDP problem is of the form:
 \begin{equation}
@@ -4217,7 +4213,7 @@ Using the so-called slack variables, denoted by $\{\xi_i \in \mathbb{R}_+\}_{i=1
 \end{equation}
 The slack variables should be non-negative because the inequality constraints are less than or equal to zero. 
 
-\subsection{Epigraph Form}
+\subsection{上方图形式}
 We can convert the optimization problem (\ref{equation_optimization_problem}) to its \textit{epigraph form}:
 \begin{equation}
 \begin{aligned}
@@ -4254,29 +4250,33 @@ This is a good technique because sometimes optimizing an upper-/lower-bound func
 我们可以用惩罚来解释拉格朗日方程, 如方程\eqref{equation_Lagrangian}指出, 想要最小化目标函数$f(x)$, 可以创建一个由目标函数组成的成本(损失)函数. 优化问题具有约束条件, 因此在最小化目标函数的同时也应满足其约束条件. 如果不满足约束条件,我们就会对成本函数进行惩罚. 为此，可以将约束添加到目标函数作为正则化(或惩罚)项, 并最小化正则化成本. 双变量$\boldsymbol{\lambda }$和$\boldsymbol{\nu}$可以看作正则化参数, 与目标函数$f(x)$相比, 对惩罚进行加权. 该正则化成本函数是拉格朗日函数或问题的拉格朗日松弛\eqref{equation_Lagrangian}. 正则化成本函数的最小化会在尝试满足约束的同时最小化函数$f(x)$.
 \end{note}
 \subsection{拉格朗日对偶函数}
+
 \begin{definition}[Lagrange dual function]
 拉格朗日对偶函数 (也称为对偶函数)$g~:~\mathbb{R}^{m_1}~\times \mathbb{R}^{m_2}\to\mathbb{R}$定义为:
-\begin{equation}
+\begin{equation}\label{equation_dual_function}
 \begin{aligned}
   g(\boldsymbol\lambda,\boldsymbol\nu)& :=\inf_{\boldsymbol{x}\in\mathcal{D}}\mathcal{L}(\boldsymbol{x},\boldsymbol{\lambda},\boldsymbol{\nu})  \\
-  &=\inf_{\boldsymbol{x}\in\mathcal{D}}\Big(f(\boldsymbol{x})+\sum_{i=1}^{m_1}\lambda_iy_i(\boldsymbol{x})+\sum_{i=1}^{m_2}\nu_i h_i(\boldsymbol{x})\Big).
+&=\inf_{\boldsymbol{x}\in\mathcal{D}}\Big(f(\boldsymbol{x})+\sum_{i=1}^{m_1}\lambda_iy_i(\boldsymbol{x})+\sum_{i=1}^{m_2}\nu_i h_i(\boldsymbol{x})\Big).
   \end{aligned}
 \end{equation}
 注意到对偶函数$g$是凹函数。
 \end{definition}
-\subsection{Primal Feasibility}
+
+\subsection{原始可行性}
+
 \begin{definition}[最优点和最优函数(The optimal point and the optimum)]
 优化问题\eqref{equation_Lagrangian}的解是$x^*$表示的最优点. 该解下的函数值最小, 即$f^* := f(\boldsymbol{x}^*)$，称为问题\eqref{equation_Lagrangian}的最优函数.
 \end{definition}
 最优点$x^*$ 是在问题\eqref{equation_optimization_problem}的约束下最小化函数$ f(.) $的可行点之一.
-Hence, the optimal point is a feasible point and according to Eq. (\ref{equation_feasible_point}), we have:
+因此, 最优点为可行点且有:
 \begin{align}
 & y_i(\boldsymbol{x}^*) \leq 0, \quad \forall i \in \{1, \ldots, m_1\}, \\
 & h_i(\boldsymbol{x}^*) = 0, \quad \forall i \in \{1, \ldots, m_2\}.
 \end{align}
-These are called the \textit{primal feasibility}. 
+上式称为原始可行性. 
 
-The optimal point $\boldsymbol{x}^*$ minimizes the Lagrangian function because Lagrangian is the relaxation of optimization problem to an unconstrained problem (see Section \ref{section_Lagrangian_interpretation}). On the other hand, according to Eq. (\ref{equation_dual_function}), the dual function is the minimum of Lagrangian w.r.t. $\boldsymbol{x}$. Hence, we can write the dual function as:
+% The optimal point $\boldsymbol{x}^*$ minimizes the Lagrangian function because Lagrangian is the relaxation of optimization problem to an unconstrained problem (see Section \ref{section_Lagrangian_interpretation}). On the other hand, according to Eq. (\ref{equation_dual_function}), the dual function is the minimum of Lagrangian w.r.t. $\boldsymbol{x}$. Hence, we can write the dual function as:
+最优点$\boldsymbol{x}^*$最小化了Lagrangian函数，因为Lagrangian是将优化问题松弛为无约束问题。另一方面，根据方程（\ref{equation_dual_function}），对偶函数是Lagrangian相对于$\boldsymbol{x}$的最小值。因此，我们可以将对偶函数写成：
 \begin{equation}\label{equation_dual_function_2}
 \begin{aligned}
 g(\boldsymbol{\lambda}, \boldsymbol{\nu}) \overset{(\ref{equation_dual_function})}{=} \inf_{\boldsymbol{x} \in \mathcal{D}} \mathcal{L}(\boldsymbol{x},\boldsymbol{\lambda},\boldsymbol{\nu}) = \mathcal{L}(\boldsymbol{x}^*,\boldsymbol{\lambda},\boldsymbol{\nu}).
@@ -4284,34 +4284,36 @@ g(\boldsymbol{\lambda}, \boldsymbol{\nu}) \overset{(\ref{equation_dual_function}
 \end{equation}
 
 
-\subsection{Dual Feasibility}
-\begin{lemma}[Dual function as a lower bound]\label{lemma_dual_function_lower_bound}
+\subsection{对偶可行性}
+\begin{lemma}[对偶函数为低下界]\label{lemma_dual_function_lower_bound}
 If $\boldsymbol{\lambda} \succeq \boldsymbol{0}$, then the dual function is a lower bound for $f^*$, i.e., $g(\boldsymbol{\lambda}, \boldsymbol{\nu}) \leq f^*$. 
 \end{lemma}
 \begin{proof}
 Let $\lambda \succeq \boldsymbol{0}$ which means $\lambda_i \geq 0, \forall i$.
-Consider a feasible $\widetilde{\boldsymbol{x}}$ for problem (\ref{equation_optimization_problem}). According to Eq. (\ref{equation_feasible_point}), we have:
+Consider a feasible $\widetilde{\boldsymbol{x}}$ for problem (\ref{equation_optimization_problem}). We have:
 \begin{align}
 \mathcal{L}(\widetilde{\boldsymbol{x}},\boldsymbol{\lambda},\boldsymbol{\nu}) &\overset{(\ref{equation_Lagrangian})}{=} f(\widetilde{\boldsymbol{x}}) + \sum_{i=1}^{m_1} \underbrace{\lambda_i}_{\geq 0} \underbrace{y_i(\widetilde{\boldsymbol{x}})}_{\leq 0} + \sum_{i=1}^{m_2} \nu_i \underbrace{h_i(\widetilde{\boldsymbol{x}})}_{=0} \nonumber\\
 &\leq f(\widetilde{\boldsymbol{x}}). \label{equation_proofLowerBound_dualFunction_1}
 \end{align}
-Therefore, we have:
+因此，
 \begin{align*}
 f(\widetilde{\boldsymbol{x}}) \overset{(\ref{equation_proofLowerBound_dualFunction_1})}{\geq} \mathcal{L}(\widetilde{\boldsymbol{x}}, \boldsymbol{\lambda}, \boldsymbol{\nu}) \geq \inf_{\boldsymbol{x} \in \mathcal{D}} \mathcal{L}(\boldsymbol{x}, \boldsymbol{\lambda}, \boldsymbol{\nu}) \overset{(\ref{equation_dual_function})}{=} g(\boldsymbol{\lambda}, \boldsymbol{\nu}).
 \end{align*}
-Hence, the dual function is a lower bound for the function of all feasible points. As the optimal point $\boldsymbol{x}^*$ is a feasible point, the dual function is a lower bound for $f^*$. Q.E.D.
+因此，对偶函数是所有可行点函数的下界。由于最优点$\boldsymbol{x}^*$是一个可行点，对偶函数是$f^*$的下界。
+% Hence, the dual function is a lower bound for the function of all feasible points. As the optimal point $\boldsymbol{x}^*$ is a feasible point, the dual function is a lower bound for $f^*$. 
 \end{proof}
 
-\begin{corollary}[Nonnegativity of dual variables for inequality constraints]\label{corollary_nonnegativity_dual_variables}
-From Lemma \ref{lemma_dual_function_lower_bound}, we conclude that for having the dual function as a lower bound for the optimum function, the dual variable $\{\lambda_i\}_{i=1}^{m_1}$ for inequality constraints (less than or equal to zero) should be non-negative, i.e.:
+\begin{corollary}[不等式的对偶变量的非负性]\label{corollary_nonnegativity_dual_variables}
+% From Lemma \ref{lemma_dual_function_lower_bound}, we conclude that for having the dual function as a lower bound for the optimum function, the dual variable $\{\lambda_i\}_{i=1}^{m_1}$ for inequality constraints (less than or equal to zero) should be non-negative, i.e.:
+根据引理\ref{lemma_dual_function_lower_bound}，我们得出结论，要使对偶函数成为最优函数的下界，不等式约束（小于或等于零）的对偶变量$\{\lambda_i\}_{i=1}^{m_1}$应该是非负的，即：
 \begin{align}\label{equation_nonnegativity_dual_variables}
 \boldsymbol{\lambda} \succeq \boldsymbol{0} \quad\text{ or }\quad \lambda_i \geq 0, \,\, \forall i \in \{1, \dots, m_1\}.
 \end{align}
-Note that if the inequality constraints are greater than or equal to zero, we should have $\lambda_i \leq 0, \quad \forall i$ because $y_i(\boldsymbol{x}) \geq 0 \implies -y_i(\boldsymbol{x}) \leq 0$. In this paper, we assume that the inequality constraints are less than or equal to zero. If some of the inequality constraints are greater than or equal to zero, we convert them to less than or equal to zero by multiplying them to $-1$.
+请注意，如果不等式约束大于或等于零，我们应该有$\lambda_i \leq 0，\quad \forall i$，因为$y_i(\boldsymbol{x}) \geq 0 \implies -y_i(\boldsymbol{x}) \leq 0$。在本文中，我们假设不等式约束小于或等于零。如果某些不等式约束大于或等于零，则通过将它们乘以$-1$将它们转换为小于或等于零。
 \end{corollary}
-The inequalities in Eq. (\ref{equation_nonnegativity_dual_variables}) are called the \textit{dual feasibility}. 
+式(\ref{equation_nonnegativity_dual_variables})中的不等式称为原始可行性. 
 
-\subsection{The Dual Problem, Weak and Strong Duality, and Slater's Condition}\label{section_dual_problem}
+\subsection{对偶问题, 强弱对偶性, Slater条件}\label{section_dual_problem}
 
 According to Eq. (\ref{lemma_dual_function_lower_bound}), the dual function is a lower bound for the optimum function, i.e., $g(\boldsymbol{\lambda}, \boldsymbol{\nu}) \leq f^*$. We want to find the best lower bound so we maximize $g(\boldsymbol{\lambda}, \boldsymbol{\nu})$ w.r.t. the dual variables $\boldsymbol{\lambda}, \boldsymbol{\nu}$. Moreover, Eq. (\ref{equation_nonnegativity_dual_variables}) says that the dual variables for inequalities must be nonnegative. Hence, we have the following optimization:
 \begin{equation}\label{equation_dual_optimization_problem}
@@ -4404,7 +4406,7 @@ we have strong duality if it is strictly feasible, i.e.:
 In other words, for at least one point in the interior of domain (not on the boundary of domain), all the inequality constraints hold strictly. This is called the Slater's condition. 
 \end{lemma}
 
-\subsection{Complementary Slackness}
+\subsection{互补松弛性}
 
 Assume that the problem has strong duality, the primal optimal is $\boldsymbol{x}^*$ and dual optimal variables are $\boldsymbol{\lambda}^*$ and $\boldsymbol{\nu}^*$. We have:
 \begin{align}
@@ -4435,7 +4437,7 @@ These conditions can be restated as:
 which means that, for an inequality constraint, if the dual optimal is nonzero, its inequality function of the primal optimal must be zero. If the inequality function of the primal optimal is nonzero, its dual optimal must be zero.
 
 % \subsection{Gradient Vanishing of Lagrangian}
-\subsection{Stationarity Condition}
+\subsection{驻点条件}
 
 As was explained before, the Lagrangian function can be interpreted as a regularized cost function to be minimized. Hence, the constrained optimization problem (\ref{equation_optimization_problem}) is converted to minimization of the Lagrangian function, Eq. (\ref{equation_Lagrangian}), which is an unconstrained optimization problem:
 \begin{align}
@@ -4451,8 +4453,21 @@ As this is an unconstrained problem, its optimization is easy. We can find its m
 \end{equation}
 This equation is called the \textit{stationarity condition} because this shows that the gradient of Lagrangian w.r.t. $\boldsymbol{x}$ should vanish to zero (n.b. a stationary point of a function is a point where the derivative of function is zero). This derivative holds for all dual variables and not just for the optimal dual variables. 
 We can claim that the gradient of Lagrangian w.r.t. $\boldsymbol{x}$ should vanish to zero because the dual function, defined in Eq. (\ref{equation_dual_function}), should exist.  
-
-\subsection{KKT Conditions}
+正如之前所解释的，Lagrange函数可以被解释为一个需要被最小化的正则化成本函数。因此，受限优化问题（\ref{equation_optimization_problem}）被转换为Lagrange函数的最小化，即方程（\ref{equation_Lagrangian}），这是一个无约束的优化问题：
+\begin{align}
+\underset{\boldsymbol{x}}{\text{最小化}}\,\, \mathcal{L}(\boldsymbol{x},\boldsymbol{\lambda},\boldsymbol{\nu}).
+\end{align}
+请注意，根据方程（\ref{equation_dual_function}），这个问题是对偶函数。
+由于这是一个无约束问题，它的优化很容易。我们可以通过将其关于$\boldsymbol{x}$的导数（记为$\nabla_{\boldsymbol{x}} \mathcal{L}$）置零来找到它的最小值：
+\begin{equation}
+\begin{aligned}
+&\nabla_{\boldsymbol{x}} \mathcal{L}(\boldsymbol{x},\boldsymbol{\lambda},\boldsymbol{\nu}) = 0 \overset{（\ref{equation_Lagrangian}）}{\implies} \\
+& \nabla_{\boldsymbol{x}} f(\boldsymbol{x}) + \sum_{i=1}^{m_1} \lambda_i \nabla_{\boldsymbol{x}} y_i(\boldsymbol{x}) + \sum_{i=1}^{m_2} \nu_i \nabla_{\boldsymbol{x}} h_i(\boldsymbol{x}) = 0。
+\end{aligned}
+\end{equation}
+这个方程被称为\textit{稳定条件}，因为它表明Lagrange函数关于$\boldsymbol{x}$的梯度应该消失为零（注：函数的稳定点是函数导数为零的点）。这个导数对所有对偶变量都成立，而不仅仅是对最优对偶变量成立。
+我们可以声称Lagrange函数关于$\boldsymbol{x}$的梯度应该消失为零，因为对偶函数在方程（\ref{equation_dual_function}）中被定义为存在。
+\subsection{KKT条件}
 
 We derived the primal feasibility, dual feasibility, complementary slackness, and stationarity condition. These four conditions are called the \textit{Karush-Kuhn-Tucker (KKT) conditions} \cite{karush1939minima,kuhn1951nonlinear}. 
 The primal optimal variable $\boldsymbol{x}^*$ and the dual optimal variables $\boldsymbol{\lambda}^* = [\lambda_1^*, \dots, \lambda_{m_1}^*]^\top$, $\boldsymbol{\nu}^* = [\nu_1^*, \dots, \nu_{m_2}^*]^\top$ must satisfy the KKT conditions. 
@@ -4541,24 +4556,22 @@ f^* = \min_{\boldsymbol{x}}\, \mathcal{L}(\boldsymbol{x},\boldsymbol{\lambda}^*,
 \end{align}
 \end{enumerate}
 
-\section{First-Order Optimization: Gradient Methods}\label{section_first_order_methods}
+\section{一阶算法：梯度下降法}\label{section_first_order_methods}
 
-\subsection{Gradient Descent}\label{section_gradient_descent}
+\subsection{梯度下降}\label{section_gradient_descent}
+“梯度下降”是基本的一阶方法之一。它最初是由Cauchy在1874年\cite{lemarechal2012cauchy}和Hadamard在1908年\cite{hadamard1908memoire}提出的，其收敛性在\cite{curry1944method}中得到了分析。
+\subsubsection{更新步骤}\label{section_GD_step_update}
 
-\textit{Gradient descent} is one of the fundamental first-order methods. It was first suggested by Cauchy in 1874 \cite{lemarechal2012cauchy} and Hadamard in 1908 \cite{hadamard1908memoire} and its convergence was later analyzed in \cite{curry1944method}. In the following, we introduce this method. 
-
-\subsubsection{Step of Update}\label{section_GD_step_update}
-
-Consider the unconstrained optimization problem (\ref{equation_optimization_problem_unconstrained}).
-Here, we denote $\boldsymbol{x}^* := \arg \min_{\boldsymbol{x}} f(\boldsymbol{x})$ and $f^* := \min_{\boldsymbol{x}} f(\boldsymbol{x}) = f(\boldsymbol{x}^*)$.
-In numerical optimization for unconstrained optimization, we start with a random feasible initial point and iteratively update it by step $\Delta \boldsymbol{x}$: 
+考虑无约束优化问题 (\ref{equation_optimization_problem_unconstrained}).
+记 $\boldsymbol{x}^* := \arg \min_{\boldsymbol{x}} f(\boldsymbol{x})$ 和 $f^* := \min_{\boldsymbol{x}} f(\boldsymbol{x}) = f(\boldsymbol{x}^*)$.
+在无约束优化的数值优化中，我们从一个随机的可行初始点开始，然后通过步骤$\Delta \boldsymbol{x}$进行迭代更新：
 \begin{align}\label{equation_update_point_numerical_optimization}
 \boldsymbol{x}^{(k+1)} := \boldsymbol{x}^{(k)} + \Delta \boldsymbol{x},
 \end{align}
-until we converge to (or get sufficiently close to) the desired optimal point $\boldsymbol{x}^*$. 
-Note that the step $\Delta\boldsymbol{x}$ is also denoted by $\boldsymbol{p}$ in the literature, i.e., $\boldsymbol{p} := \Delta\boldsymbol{x}$.
-Let the function $f(.)$ be differentiable and its gradient is $L$-smooth. 
-If we set $\boldsymbol{x} = \boldsymbol{x}^{(k)}$ and $\boldsymbol{y} = \boldsymbol{x}^{(k+1)} = \boldsymbol{x}^{(k)} + \Delta \boldsymbol{x}$ in Eq. (\ref{equation_fundamental_theorem_calculus_Lipschitz}), we have:
+直到收敛到（或足够接近）期望的最优点$\boldsymbol{x}^*$。
+步骤$\Delta\boldsymbol{x}$在文献中也被记为$\boldsymbol{p}$，即$\boldsymbol{p} := \Delta\boldsymbol{x}$。
+让函数$f(.)$可微分，并且它的梯度是$L$-光滑的。
+如果在等式(\ref{equation_fundamental_theorem_calculus_Lipschitz})中设置$\boldsymbol{x} = \boldsymbol{x}^{(k)}$和$\boldsymbol{y} = \boldsymbol{x}^{(k+1)} = \boldsymbol{x}^{(k)} + \Delta \boldsymbol{x}$，有:
 \begin{align}
 &f(\boldsymbol{x}^{(k)} + \Delta \boldsymbol{x}) \leq f(\boldsymbol{x}^{(k)}) + \nabla f(\boldsymbol{x}^{(k)})^\top \Delta \boldsymbol{x} + \frac{L}{2} \|\Delta \boldsymbol{x}\|_2^2 \nonumber\\
 &\implies f(\boldsymbol{x}^{(k)} + \Delta \boldsymbol{x}) - f(\boldsymbol{x}^{(k)}) \nonumber\\
@@ -5406,7 +5419,7 @@ Q.E.D.
 \label{figure_soft_thresholding}
 \end{figure}
 
-\subsubsection{Proximal Point Algorithm}
+\subsubsection{近端点算法}
 
 The term $g(\boldsymbol{u}) + 1 / (2\lambda) \|\boldsymbol{u} - \boldsymbol{x}\|_2^2$ in Eq. (\ref{equation_proximal_mapping_scaled}) is strongly convex; hence, the proximal point, $\textbf{prox}_{\lambda g}(\boldsymbol{x})$, is unique. 
 
@@ -8039,7 +8052,16 @@ Any numerical optimization method can be used for solving this problem to find t
 
 
 
+\chapter{多目标回归}
+\vspace{0.5in}
+\begin{center}
+    \textcolor[RGB]{255, 0, 0}{\faHeart}真正能带来满足感的不是苗条或财富, 而是肯定自己的人生.\textcolor[RGB]{255, 0, 0}{\faHeart}
+\end{center}
+\rightline{——《心流: 最优体验心理学》}
 
+\begin{center}
+    \pgfornament[width=0.36\linewidth,color=lsp]{88}
+\end{center}
 \section{多目标岭回归}
 多目标回归的任务是利用一组共同的输入向量, 实现同时对多个连续型变量进行预测. 考虑最基本的线性多目标回归模型如下:
 
@@ -8437,6 +8459,123 @@ H^2&=\left( I_Q-\frac{1}{Q}\mathbb{I}_Q\mathbb{I}_{Q}^{\top} \right) \left( I_Q-
 T=H\mathbf{X}^{\top}\mathbf{X}H=U\varSigma V^{\top}V\varSigma U^{\top}=U\varSigma ^2U^\top 
 \end{equation}
 且由于: $TU\varSigma =U\varSigma \left( \varSigma ^{\top}\varSigma \right) $. 可以直接计算得到降维后的坐标. 考虑到$T\in \mathbb{R}^{N\times N}$, 而$\mathbf{\Sigma}\in \mathbb{R}^{K\times K}$, 当样本数量较少时可以考虑PCoA算法直接计算降维后的坐标. 
+\section{基于相似性的特征选择方法}
+基于相似性的特征选择方法基于特征保持数据相似性的能力来评估特征的重要性，并通过贪婪准则选择前$K$个特征作为特征选择的结果。其代表性方法有SPEC，Fisher得分，迹比准则等。然而，上述方法往往局限于分类问题，其无法针对回归问题进行特征选择。Laplacian得分作为一种基于相似性的无监督方法，其将保持数据流形结构的能力作为特征的评估标准。其包含三个阶段：首先，构建一个具有$n$个节点的近邻图$\mathcal{G}$，其中的每个节点对应于一个样本；若样本$\bm{x}_i$与$\bm{x}_j$互为近邻，则节点$i$与$j$在近邻图$\mathcal{G}$中相连。然后，计算亲和矩阵(affinity matrix) $\bm{S}$，当节点$i$与$j$相连时，$\bm{S}\left( i,j \right) =\exp \left( -\frac{\left\| \boldsymbol{x}_i-\boldsymbol{x}_j \right\| ^2}{t} \right) $，其中$t$为常数；否则$\bm{S}\left( i,j \right)  = 0$。对角矩阵$\bm{D}$定义为$\bm{D}\left( i,j \right) =\sum\nolimits_{j=1}^n{\bm{S}\left( i,j \right)}$，则Laplacian 矩阵$\bm{L} = \bm{D}-\bm{S}$。最后，每个特征$\bm{f}_r$对应的Laplacian得分为：
+\begin{equation}
+Lap\_score(\bm{f}_r)=\frac{\tilde{\bm{f}}_{r}^{T}\bm{L}\tilde{\bm{f}}_r}{\tilde{\bm{f}}_{r}^{T}\bm{D}\tilde{\bm{f}}_r}
+\end{equation}
+其中，$\tilde{\bm{f}}_r=\bm{f}_r-\frac{\bm{f}_{r}^{T}\bm{D}\bm{1}}{\bm{1}^T\bm{D}\bm{1}}\bm{1}$。由于Laplacian得分单独评估每个特征的重要性，所以选择$K$个特征的任务可以通过挑选最小Laplacian得分的前$K$个特征来解决。
+Filter类方法采用特定准则如拉普拉斯得分、PCA得分、Pearson相关系数等来对每个特征进行打分，根据得分来对特征进行降序排序，并选择前$K$个特征作为特征选择的结果。Filter类方法原理简单，可以高效地筛选特征，但由于其并未考虑所选特征与建模算法之间的关系，所选特征子集可能并不能在建模算法上取得较好的性能。以数据集$\left\{ \boldsymbol{x}_i,y_i \right\} _{i=1}^{n}$为例，其数据矩阵$X=\left[ \bm{f}_1,\bm{f}_2,\cdots ,\bm{f}_d \right] \in \mathbb{R} ^{n\times d}$，$\bm{f}_r$表示第$r$个特征的值向量；输出变量的值向量为$\bm{y}=\left[ y_1,y_2,\cdots ,y_n \right]^T $。本文对现有主要的特征打分算法进行介绍。
+\subsection{Pearson相关系数}
+Pearson相关系数的定义如下：
+\begin{equation}
+R\left( r \right) =\frac{cov\left( \bm{f}_r,\boldsymbol{y} \right)}{\sqrt{var\left( \bm{f}_r \right) \cdot var\left( \boldsymbol{y} \right)}}
+\end{equation}
+其中，$cov\left( \cdot ,\cdot \right) $表示变量之间的协方差，$var(\cdot)$ 表示变量方差。可以看出，Pearson相关系数仅依据线性关系来对特征进行打分和评价。
+\subsection{Laplacian得分}
+Laplacian 得分是一种无监督特征选择算法，它选择最能保持数据流形结构的特征。其包含三个阶段：首先，构建一个具有$n$个节点的近邻图$\mathcal{G}$，其中的每个节点对应于一个样本；若样本$\bm{x}_i$与$\bm{x}_j$互为近邻，则节点$i$与$j$在近邻图$\mathcal{G}$中相连。然后，计算亲和矩阵(affinity matrix) $\bm{S}$，当节点$i$与$j$相连时，$\bm{S}\left( i,j \right) =\exp \left( -\frac{\left\| \boldsymbol{x}_i-\boldsymbol{x}_j \right\| ^2}{t} \right) $，其中$t$为常数；否则$\bm{S}\left( i,j \right)  = 0$。对角矩阵$\bm{D}$定义为$\bm{D}\left( i,j \right) =\sum\nolimits_{j=1}^n{\bm{S}\left( i,j \right)}$，则Laplacian 矩阵$\bm{L} = \bm{D}-\bm{S}$。最后，每个特征$\bm{f}_r$对应的Laplacian得分为：
+\begin{equation}
+Lap\_score(\bm{f}_r)=\frac{\tilde{\bm{f}}_{r}^{T}\bm{L}\tilde{\bm{f}}_r}{\tilde{\bm{f}}_{r}^{T}\bm{D}\tilde{\bm{f}}_r}
+\end{equation}
+其中，$\tilde{\bm{f}}_r=\bm{f}_r-\frac{\bm{f}_{r}^{T}\bm{D}\bm{1}}{\bm{1}^T\bm{D}\bm{1}}\bm{1}$。由于Laplacian得分单独评估每个特征的重要性，所以选择$K$个特征的任务可以通过挑选最小Laplacian得分的前$K$个特征来解决。
+%\subsubsection{SPES}
+\subsection{PCA得分}
+PCA得分是一种最简单的评价准则，其将特征的方差作为衡量特征重要性的标准，第$r$个特征的PCA得分计算公式为
+\begin{equation}
+PCA\left( r \right) =\frac{1}{n}\sum_{i=1}^n{\left( x_{i,r}-\mu _r \right) ^2}
+\end{equation}
+其中，$\mu _r=\frac{1}{n}\sum_{i=1}^n{x_{i,r}}$。PCA得分的大小反映了特征的表示能力，得分值越大说明特征的表示能力越强，其特征重要程度也越大。
+\subsection{基于信息度量的Filter方法}
+基于信息度量的Filter方法主要是通过设计不同信息准则来对特征的重要性进行度量。该类方法主要针对离散型变量，当变量为连续型时，需要通过一定的离散化技术来对变量进行处理。
+首先，给出特征变量的熵、条件熵、互信息以及条件互信息的相关定义。离散型随机变量$X$的熵(Entropy)定义如下：
+\begin{equation}
+H\left( X \right) =-\sum_{x_i\in X}^{}{P\left( x_i \right) \log \left( P\left( x_i \right) \right)},
+\end{equation}
+其中，$x_i$表示随机变量$X$的特定值，$p\left(x_i\right)$表示随机变量$X$在特定值$x_i$上的估计概率。 给定另一离散型随机变量$Y$时$X$的条件熵(Conditional Entropy)为
+\begin{equation}
+H\left( X\left| Y \right. \right) =\sum_{y_j\in Y}{p\left( y_j \right)}\sum_{x_i\in X}^{}{P\left( x_i\left| y_j \right. \right) \log \left( P\left( x_i\left| y_j \right. \right) \right)},
+\end{equation}
+其中，$p\left( y_j \right)$是$y_j$的先验概率，$P\left( x_i\left| y_j \right. \right)$是$x_i$在$y_j$下的条件概率。条件熵的度量表示给定另一个离散型随机变量$Y$时$X$的不确定性。$X$与$Y$之间的互信息衡量的是$X$与$Y$之间共享的信息量，其计算方式为：
+\begin{equation}
+\begin{aligned}
+I\left( X;Y \right)& =H\left( X \right) -H\left( X\left| Y \right. \right) \\
+&=\sum_{x_i\in X}{\sum_{y_j\in Y}{P\left( x_i,y_j \right) \log \frac{P\left( x_i,y_j \right)}{P\left( x_i \right) P\left( y_j \right)},}}
+\end{aligned}
+\end{equation}
+其中，$P\left( x_i,y_j \right)$为$x_i$和$y_j$的联合概率。易知$I\left( X;Y \right)$满足对称性，若$X$与$Y$相互独立，则$I\left( X;Y \right)=0$。与熵的概念类似，在给定第三个离散变量$Z$时，$X$与$Y$之间的条件互信息为：
+\begin{equation}
+\begin{aligned}
+I\left( X;Y\left| Z \right. \right)&=H\left( X\left| Z \right. \right) -H\left( X\left| Y,Z \right. \right) \\
+&=\sum_{z_k\in Z}{P\left( z_k \right)}\sum_{x_i\in X}{\sum_{y_j\in Y}{P\left( x_i,y_j\left| z_k \right. \right) \log \frac{P\left( x_i,y_j\left| z_k \right. \right)}{P\left( x_i\left| z_k \right. \right) P\left( y_j\left| z_k \right. \right)}.}}
+\end{aligned}
+\end{equation}
+其表示在随机变量$Z$给定时，$X$与$Y$共享的互信息量。
+互信息最大化(Mutual Information Maximization, MIM)通过特征与标签之间的相关性来度量特征的重要性。则特征$x_k$的互信息得分为：
+\begin{equation}
+J_{MIM}\left( X_k \right) =I\left( X_k;Y \right).
+\end{equation}
+显然，MIM并未考虑特征之间冗余关系。在得到所有未选特征的MIM特征得分后，选择特征得分最高的特征并将其添加到所选特征集合中，直到获得所需数目的特征子集。
+互信息特征选择(Mutual Information Feature Selection, MIFS) 同时考虑特征相关性与冗余性，其特征得分为：
+\begin{equation}
+J_{MIFS}(X_k)=I(X_k;Y)-\beta\sum_{X_j\in\mathcal{S}}I(X_k;X_j).
+\end{equation}
+其中，$\mathcal{S}$为所有特征组成的集合。在MIFS中，新特征的特征相关性由第一项$I(X_k;Y)$来评估，而第二项试图惩罚与当前选定特征具有高互信息的特征，以使特征冗余最小化。
+最小冗余最大相关(minimum Redundancy Maximum Relevance, mRMR) 基于MIFS方法，将$\beta$设定为选择特征数的倒数，其特征得分为：
+\begin{equation}
+J_{mRMR}(X_k)=I(X_k;Y)-\frac{1}{|\mathcal{S}|}\sum_{X_j\in\mathcal{S}}I(X_k;X_j).
+\end{equation}
+显然，MRMR会随着选择特征的增多，逐渐减少特征冗余对得分的影响。基于条件信息熵最大化特征选择(Conditional Infomax Feature Extraction, CIFE) 引入了类-相关冗余的概念来反映类相关性和冗余的复合效应。CIFE通过忽略高阶交互来降低计算复杂性。其对应的表达式为：
+\begin{equation}
+J_{CIFE}(X_k)=I(X_k;Y)-\sum_{X_j\in\mathcal{S}}I(X_j;X_k)+\sum_{X_j\in\mathcal{S}}I(X_j;X_k|Y).
+\end{equation}
+其中，第三项用以最大化类相关的冗余性。联合互信息(Joint Mutual Information, JMI)被提出来增加在给定类标签下新特征和已选择特征之间共享的互补信息，其特征得分的计算公式为：
+\begin{equation}
+J_{JMI}(X_k)=\sum_{X_j\in\mathcal{S}}I(X_k,X_j;Y).
+\end{equation}
+
+条件互信息最大化(Conditional Mutual Information Maximization, CMIM)是一种迭代选择特征的准则，该准则在给定所选特征的情况下，使特征与标签的互信息最大化。其特征得分的计算公式为：
+\begin{equation}
+J_{CMIM}(X_k)=\min_{X_j\in\mathcal{S}}[I(X_k;Y|X_j)].
+\end{equation}
+式中，通过选择使$I(X_k;Y|X_j)$最小值最大化的特征，可以保证所选特征具有较强的预测能力，并减少对所选特征的冗余。
+
+综上所述, 不同Filter方法的特点如表\ref{tab:4.1}所示。
+
+\begin{table}[htb]
+ \begin{center}
+ \begin{minipage}[!]{1\linewidth} % 如果想在表格中使用脚注，minipage是个不错的办法
+ \caption[Filter类特征选择方法]{不同Filter类特征选择方法对比}
+ \label{tab:4.1}
+   \begin{tabular*}{\linewidth}{m{2cm}<{\centering}m{7cm}<{\centering}m{2.5cm}<{\centering}m{4cm}<{\centering}} %{\linewidth}{l<{\centering}p{8cm}<{\centering}c<{\centering}c<{\centering}}
+     \toprule[1.5pt]
+     { 方法名称} & {特征得分} &  {特点} &  {不足} \\
+     \midrule[1pt]
+     Pearson相关系数 & $cov\left( \bm{f}_r,\boldsymbol{y} \right)\Big/\sqrt{var\left( \bm{f}_r \right) \cdot var\left( \boldsymbol{y} \right)}$ & 基于线性关系 & 未考虑非线性关系 \\
+     Laplacian得分 &$\tilde{\bm{f}}_{r}^{T}\bm{L}\tilde{\bm{f}}_r\Big/\tilde{\bm{f}}_{r}^{T}\bm{D}\tilde{\bm{f}}_r$ & 基于样本局部结构 & 未考虑标签信息\\
+     PCA得分 &$\frac{1}{n}\sum_{i=1}^n{\left( x_{i,r}-\mu _r \right) ^2}$ & 基于特征方差 & 未考虑标签信息\\
+     MIN & $J_{MIM}\left( X_k \right) =I\left( X_k;Y \right)$  & 基于信息度量 & 仅适用于离散型变量\\
+	MIFS & $J_{MIFS}(X_k)=I(X_k;Y)-\beta\sum_{X_j\in\mathcal{S}}I(X_k;X_j)$  & 基于信息度量 & 仅适用于离散型变量\\
+     mRMR& $J_{MRMR}(X_k)=I(X_k;Y)-\frac{1}{|\mathcal{S}|}\sum_{X_j\in\mathcal{S}}I(X_k;X_j)$  & 基于信息度量 & 仅适用于离散型变量\\
+	CIFE & $J_{CIFE}(X_k)=I(X_k;Y)-\sum_{X_j\in\mathcal{S}}I(X_j;X_k)+\sum_{X_j\in\mathcal{S}}I(X_j;X_k|Y)$  & 基于信息度量 & 仅适用于离散型变量\\
+      JMI& $J_{JMI}(X_k)=\sum_{X_j\in\mathcal{S}}I(X_k,X_j;Y)$  & 基于信息度量 & 仅适用于离散型变量\\
+	CMIM & $J_{CMIM}(X_k)=\min_{X_j\in\mathcal{S}}[I(X_k;Y|X_j)]$  & 基于信息度量 & 仅适用于离散型变量\\
+     \bottomrule[1.5pt]
+   \end{tabular*}
+ \end{minipage}
+ \end{center}
+\end{table}
+
+
+\chapter{谱聚类}
+\vspace{0.5in}
+\begin{center}
+    \textcolor[RGB]{255, 0, 0}{\faHeart}真正能带来满足感的不是苗条或财富, 而是肯定自己的人生.\textcolor[RGB]{255, 0, 0}{\faHeart}
+\end{center}
+\rightline{——《心流: 最优体验心理学》}
+
+\begin{center}
+    \pgfornament[width=0.36\linewidth,color=lsp]{88}
+\end{center}
 \section{Laplacian矩阵及其解释}\label{section_interpretation_Laplacian}
 \subsection{邻接矩阵}
 假设我们有一个数据集$\{\boldsymbol{x}_i\}_{i=1}^n$。
@@ -9687,111 +9826,8 @@ where $D_{j,l}=\pmb{\phi}(\pmb{x}_{(j)})^{T}\pmb{\phi}(\pmb{x}_{(l)}){=}D(\pmb{x
 where $\beta_k = [\beta_{k,1},\ldots,\beta_{k,n}]^\top,k = 1,\ldots,d$ are regression coefficient vectors, $\beta_{k,j}$ is a coefficient for $[K(x_{k,1},x_{k,j}),\ldots,K(x_{k,n},x_{k,j})]^{\top}$, and $\lambda>0 $ is a regularization parameter. An advantage of SpAM is that it is a convex method and can be efficiently optimized by the backfitting algorithm. The potential weakness of SpAM lie in: (a)
 it handles only additive models and is ineffective to nonadditive models and (b) SpAM optimization is usually
 computationally expensive
-\section{基于相似性的特征选择方法}
-基于相似性的特征选择方法基于特征保持数据相似性的能力来评估特征的重要性，并通过贪婪准则选择前$K$个特征作为特征选择的结果。其代表性方法有SPEC，Fisher得分，迹比准则等。然而，上述方法往往局限于分类问题，其无法针对回归问题进行特征选择。Laplacian得分作为一种基于相似性的无监督方法，其将保持数据流形结构的能力作为特征的评估标准。其包含三个阶段：首先，构建一个具有$n$个节点的近邻图$\mathcal{G}$，其中的每个节点对应于一个样本；若样本$\bm{x}_i$与$\bm{x}_j$互为近邻，则节点$i$与$j$在近邻图$\mathcal{G}$中相连。然后，计算亲和矩阵(affinity matrix) $\bm{S}$，当节点$i$与$j$相连时，$\bm{S}\left( i,j \right) =\exp \left( -\frac{\left\| \boldsymbol{x}_i-\boldsymbol{x}_j \right\| ^2}{t} \right) $，其中$t$为常数；否则$\bm{S}\left( i,j \right)  = 0$。对角矩阵$\bm{D}$定义为$\bm{D}\left( i,j \right) =\sum\nolimits_{j=1}^n{\bm{S}\left( i,j \right)}$，则Laplacian 矩阵$\bm{L} = \bm{D}-\bm{S}$。最后，每个特征$\bm{f}_r$对应的Laplacian得分为：
-\begin{equation}
-Lap\_score(\bm{f}_r)=\frac{\tilde{\bm{f}}_{r}^{T}\bm{L}\tilde{\bm{f}}_r}{\tilde{\bm{f}}_{r}^{T}\bm{D}\tilde{\bm{f}}_r}
-\end{equation}
-其中，$\tilde{\bm{f}}_r=\bm{f}_r-\frac{\bm{f}_{r}^{T}\bm{D}\bm{1}}{\bm{1}^T\bm{D}\bm{1}}\bm{1}$。由于Laplacian得分单独评估每个特征的重要性，所以选择$K$个特征的任务可以通过挑选最小Laplacian得分的前$K$个特征来解决。
-Filter类方法采用特定准则如拉普拉斯得分、PCA得分、Pearson相关系数等来对每个特征进行打分，根据得分来对特征进行降序排序，并选择前$K$个特征作为特征选择的结果。Filter类方法原理简单，可以高效地筛选特征，但由于其并未考虑所选特征与建模算法之间的关系，所选特征子集可能并不能在建模算法上取得较好的性能。以数据集$\left\{ \boldsymbol{x}_i,y_i \right\} _{i=1}^{n}$为例，其数据矩阵$X=\left[ \bm{f}_1,\bm{f}_2,\cdots ,\bm{f}_d \right] \in \mathbb{R} ^{n\times d}$，$\bm{f}_r$表示第$r$个特征的值向量；输出变量的值向量为$\bm{y}=\left[ y_1,y_2,\cdots ,y_n \right]^T $。本文对现有主要的特征打分算法进行介绍。
-\subsection{Pearson相关系数}
-Pearson相关系数的定义如下：
-\begin{equation}
-R\left( r \right) =\frac{cov\left( \bm{f}_r,\boldsymbol{y} \right)}{\sqrt{var\left( \bm{f}_r \right) \cdot var\left( \boldsymbol{y} \right)}}
-\end{equation}
-其中，$cov\left( \cdot ,\cdot \right) $表示变量之间的协方差，$var(\cdot)$ 表示变量方差。可以看出，Pearson相关系数仅依据线性关系来对特征进行打分和评价。
-\subsection{Laplacian得分}
-Laplacian 得分是一种无监督特征选择算法，它选择最能保持数据流形结构的特征。其包含三个阶段：首先，构建一个具有$n$个节点的近邻图$\mathcal{G}$，其中的每个节点对应于一个样本；若样本$\bm{x}_i$与$\bm{x}_j$互为近邻，则节点$i$与$j$在近邻图$\mathcal{G}$中相连。然后，计算亲和矩阵(affinity matrix) $\bm{S}$，当节点$i$与$j$相连时，$\bm{S}\left( i,j \right) =\exp \left( -\frac{\left\| \boldsymbol{x}_i-\boldsymbol{x}_j \right\| ^2}{t} \right) $，其中$t$为常数；否则$\bm{S}\left( i,j \right)  = 0$。对角矩阵$\bm{D}$定义为$\bm{D}\left( i,j \right) =\sum\nolimits_{j=1}^n{\bm{S}\left( i,j \right)}$，则Laplacian 矩阵$\bm{L} = \bm{D}-\bm{S}$。最后，每个特征$\bm{f}_r$对应的Laplacian得分为：
-\begin{equation}
-Lap\_score(\bm{f}_r)=\frac{\tilde{\bm{f}}_{r}^{T}\bm{L}\tilde{\bm{f}}_r}{\tilde{\bm{f}}_{r}^{T}\bm{D}\tilde{\bm{f}}_r}
-\end{equation}
-其中，$\tilde{\bm{f}}_r=\bm{f}_r-\frac{\bm{f}_{r}^{T}\bm{D}\bm{1}}{\bm{1}^T\bm{D}\bm{1}}\bm{1}$。由于Laplacian得分单独评估每个特征的重要性，所以选择$K$个特征的任务可以通过挑选最小Laplacian得分的前$K$个特征来解决。
-%\subsubsection{SPES}
-\subsection{PCA得分}
-PCA得分是一种最简单的评价准则，其将特征的方差作为衡量特征重要性的标准，第$r$个特征的PCA得分计算公式为
-\begin{equation}
-PCA\left( r \right) =\frac{1}{n}\sum_{i=1}^n{\left( x_{i,r}-\mu _r \right) ^2}
-\end{equation}
-其中，$\mu _r=\frac{1}{n}\sum_{i=1}^n{x_{i,r}}$。PCA得分的大小反映了特征的表示能力，得分值越大说明特征的表示能力越强，其特征重要程度也越大。
-\subsection{基于信息度量的Filter方法}
-基于信息度量的Filter方法主要是通过设计不同信息准则来对特征的重要性进行度量。该类方法主要针对离散型变量，当变量为连续型时，需要通过一定的离散化技术来对变量进行处理。
-首先，给出特征变量的熵、条件熵、互信息以及条件互信息的相关定义。离散型随机变量$X$的熵(Entropy)定义如下：
-\begin{equation}
-H\left( X \right) =-\sum_{x_i\in X}^{}{P\left( x_i \right) \log \left( P\left( x_i \right) \right)},
-\end{equation}
-其中，$x_i$表示随机变量$X$的特定值，$p\left(x_i\right)$表示随机变量$X$在特定值$x_i$上的估计概率。 给定另一离散型随机变量$Y$时$X$的条件熵(Conditional Entropy)为
-\begin{equation}
-H\left( X\left| Y \right. \right) =\sum_{y_j\in Y}{p\left( y_j \right)}\sum_{x_i\in X}^{}{P\left( x_i\left| y_j \right. \right) \log \left( P\left( x_i\left| y_j \right. \right) \right)},
-\end{equation}
-其中，$p\left( y_j \right)$是$y_j$的先验概率，$P\left( x_i\left| y_j \right. \right)$是$x_i$在$y_j$下的条件概率。条件熵的度量表示给定另一个离散型随机变量$Y$时$X$的不确定性。$X$与$Y$之间的互信息衡量的是$X$与$Y$之间共享的信息量，其计算方式为：
-\begin{equation}
-\begin{aligned}
-I\left( X;Y \right)& =H\left( X \right) -H\left( X\left| Y \right. \right) \\
-&=\sum_{x_i\in X}{\sum_{y_j\in Y}{P\left( x_i,y_j \right) \log \frac{P\left( x_i,y_j \right)}{P\left( x_i \right) P\left( y_j \right)},}}
-\end{aligned}
-\end{equation}
-其中，$P\left( x_i,y_j \right)$为$x_i$和$y_j$的联合概率。易知$I\left( X;Y \right)$满足对称性，若$X$与$Y$相互独立，则$I\left( X;Y \right)=0$。与熵的概念类似，在给定第三个离散变量$Z$时，$X$与$Y$之间的条件互信息为：
-\begin{equation}
-\begin{aligned}
-I\left( X;Y\left| Z \right. \right)&=H\left( X\left| Z \right. \right) -H\left( X\left| Y,Z \right. \right) \\
-&=\sum_{z_k\in Z}{P\left( z_k \right)}\sum_{x_i\in X}{\sum_{y_j\in Y}{P\left( x_i,y_j\left| z_k \right. \right) \log \frac{P\left( x_i,y_j\left| z_k \right. \right)}{P\left( x_i\left| z_k \right. \right) P\left( y_j\left| z_k \right. \right)}.}}
-\end{aligned}
-\end{equation}
-其表示在随机变量$Z$给定时，$X$与$Y$共享的互信息量。
-互信息最大化(Mutual Information Maximization, MIM)通过特征与标签之间的相关性来度量特征的重要性。则特征$x_k$的互信息得分为：
-\begin{equation}
-J_{MIM}\left( X_k \right) =I\left( X_k;Y \right).
-\end{equation}
-显然，MIM并未考虑特征之间冗余关系。在得到所有未选特征的MIM特征得分后，选择特征得分最高的特征并将其添加到所选特征集合中，直到获得所需数目的特征子集。
-互信息特征选择(Mutual Information Feature Selection, MIFS) 同时考虑特征相关性与冗余性，其特征得分为：
-\begin{equation}
-J_{MIFS}(X_k)=I(X_k;Y)-\beta\sum_{X_j\in\mathcal{S}}I(X_k;X_j).
-\end{equation}
-其中，$\mathcal{S}$为所有特征组成的集合。在MIFS中，新特征的特征相关性由第一项$I(X_k;Y)$来评估，而第二项试图惩罚与当前选定特征具有高互信息的特征，以使特征冗余最小化。
-最小冗余最大相关(minimum Redundancy Maximum Relevance, mRMR) 基于MIFS方法，将$\beta$设定为选择特征数的倒数，其特征得分为：
-\begin{equation}
-J_{mRMR}(X_k)=I(X_k;Y)-\frac{1}{|\mathcal{S}|}\sum_{X_j\in\mathcal{S}}I(X_k;X_j).
-\end{equation}
-显然，MRMR会随着选择特征的增多，逐渐减少特征冗余对得分的影响。基于条件信息熵最大化特征选择(Conditional Infomax Feature Extraction, CIFE) 引入了类-相关冗余的概念来反映类相关性和冗余的复合效应。CIFE通过忽略高阶交互来降低计算复杂性。其对应的表达式为：
-\begin{equation}
-J_{CIFE}(X_k)=I(X_k;Y)-\sum_{X_j\in\mathcal{S}}I(X_j;X_k)+\sum_{X_j\in\mathcal{S}}I(X_j;X_k|Y).
-\end{equation}
-其中，第三项用以最大化类相关的冗余性。联合互信息(Joint Mutual Information, JMI)被提出来增加在给定类标签下新特征和已选择特征之间共享的互补信息，其特征得分的计算公式为：
-\begin{equation}
-J_{JMI}(X_k)=\sum_{X_j\in\mathcal{S}}I(X_k,X_j;Y).
-\end{equation}
 
-条件互信息最大化(Conditional Mutual Information Maximization, CMIM)是一种迭代选择特征的准则，该准则在给定所选特征的情况下，使特征与标签的互信息最大化。其特征得分的计算公式为：
-\begin{equation}
-J_{CMIM}(X_k)=\min_{X_j\in\mathcal{S}}[I(X_k;Y|X_j)].
-\end{equation}
-式中，通过选择使$I(X_k;Y|X_j)$最小值最大化的特征，可以保证所选特征具有较强的预测能力，并减少对所选特征的冗余。
 
-综上所述, 不同Filter方法的特点如表\ref{tab:4.1}所示。
-
-\begin{table}[htb]
- \begin{center}
- \begin{minipage}[!]{1\linewidth} % 如果想在表格中使用脚注，minipage是个不错的办法
- \caption[Filter类特征选择方法]{不同Filter类特征选择方法对比}
- \label{tab:4.1}
-   \begin{tabular*}{\linewidth}{m{2cm}<{\centering}m{7cm}<{\centering}m{2.5cm}<{\centering}m{4cm}<{\centering}} %{\linewidth}{l<{\centering}p{8cm}<{\centering}c<{\centering}c<{\centering}}
-     \toprule[1.5pt]
-     { 方法名称} & {特征得分} &  {特点} &  {不足} \\
-     \midrule[1pt]
-     Pearson相关系数 & $cov\left( \bm{f}_r,\boldsymbol{y} \right)\Big/\sqrt{var\left( \bm{f}_r \right) \cdot var\left( \boldsymbol{y} \right)}$ & 基于线性关系 & 未考虑非线性关系 \\
-     Laplacian得分 &$\tilde{\bm{f}}_{r}^{T}\bm{L}\tilde{\bm{f}}_r\Big/\tilde{\bm{f}}_{r}^{T}\bm{D}\tilde{\bm{f}}_r$ & 基于样本局部结构 & 未考虑标签信息\\
-     PCA得分 &$\frac{1}{n}\sum_{i=1}^n{\left( x_{i,r}-\mu _r \right) ^2}$ & 基于特征方差 & 未考虑标签信息\\
-     MIN & $J_{MIM}\left( X_k \right) =I\left( X_k;Y \right)$  & 基于信息度量 & 仅适用于离散型变量\\
-	MIFS & $J_{MIFS}(X_k)=I(X_k;Y)-\beta\sum_{X_j\in\mathcal{S}}I(X_k;X_j)$  & 基于信息度量 & 仅适用于离散型变量\\
-     mRMR& $J_{MRMR}(X_k)=I(X_k;Y)-\frac{1}{|\mathcal{S}|}\sum_{X_j\in\mathcal{S}}I(X_k;X_j)$  & 基于信息度量 & 仅适用于离散型变量\\
-	CIFE & $J_{CIFE}(X_k)=I(X_k;Y)-\sum_{X_j\in\mathcal{S}}I(X_j;X_k)+\sum_{X_j\in\mathcal{S}}I(X_j;X_k|Y)$  & 基于信息度量 & 仅适用于离散型变量\\
-      JMI& $J_{JMI}(X_k)=\sum_{X_j\in\mathcal{S}}I(X_k,X_j;Y)$  & 基于信息度量 & 仅适用于离散型变量\\
-	CMIM & $J_{CMIM}(X_k)=\min_{X_j\in\mathcal{S}}[I(X_k;Y|X_j)]$  & 基于信息度量 & 仅适用于离散型变量\\
-     \bottomrule[1.5pt]
-   \end{tabular*}
- \end{minipage}
- \end{center}
-\end{table}
 
 
 
